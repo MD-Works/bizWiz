@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Laughing Forest — Retirement Living Business Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --forest:    #2C4A2E;
+  --forest-lt: #3D6B40;
+  --forest-pale:#E8F0E9;
+  --gold:      #C8A96E;
+  --gold-lt:   #E8D4A8;
+  --gold-pale: #FAF5EC;
+  --ivory:     #F7F3EC;
+  --sand:      #EDE5D4;
+  --bark:      #7A5C3A;
+  --white:     #FFFFFF;
+  --ink:       #1E2420;
+  --muted:     #6B7B6D;
+  --border:    #D4C9B0;
+  --danger:    #C0392B;
+  --success:   #2C7A4A;
+  --ff-d: 'Playfair Display', Georgia, serif;
+  --ff-b: 'Inter', system-ui, sans-serif;
+  --r: 10px;
+  --shadow: 0 2px 16px rgba(44,74,46,0.10);
+  --trans: 0.18s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--ff-b); background: var(--ivory); color: var(--ink); font-size: 15px; line-height: 1.6; }
+
+/* ── PAGE SHELL ── */
+.page-header {
+  background: var(--forest);
+  padding: 28px 32px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 5 Q35 15 30 25 Q25 15 30 5Z M20 10 Q28 20 22 30 Q18 20 20 10Z M40 10 Q42 20 38 30 Q32 20 40 10Z' fill='%23FFFFFF' fill-opacity='0.04'/%3E%3C/svg%3E") repeat;
+  pointer-events: none;
+}
+.page-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-lt); margin-bottom: 6px; }
+.page-title { font-family: var(--ff-d); font-size: 30px; color: var(--white); font-weight: 400; line-height: 1.2; margin-bottom: 6px; }
+.page-sub { font-size: 13px; color: var(--gold-lt); margin-bottom: 24px; opacity: 0.85; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar-wrap { background: rgba(255,255,255,0.1); height: 3px; margin: 0 -32px; }
+.progress-bar-fill { height: 3px; background: var(--gold); transition: width 0.4s ease; width: 0%; }
+
+/* ── STEP PILLS ── */
+.step-pills {
+  display: flex; justify-content: center; gap: 6px;
+  padding: 16px 24px; background: rgba(0,0,0,0.15);
+  flex-wrap: wrap;
+}
+.step-pill {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.5);
+  cursor: default; transition: var(--trans);
+  white-space: nowrap;
+}
+.step-pill.done { color: var(--gold-lt); border-color: var(--gold); cursor: pointer; }
+.step-pill.active { background: var(--gold); color: var(--ink); border-color: var(--gold); font-weight: 600; }
+
+/* ── WIZARD BODY ── */
+.wizard-body { max-width: 720px; margin: 0 auto; padding: 32px 24px 60px; }
+
+/* ── STEP CARD ── */
+.step-card { display: none; }
+.step-card.active { display: block; animation: fadeUp 0.25s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.step-heading { font-family: var(--ff-d); font-size: 22px; color: var(--forest); font-weight: 400; margin-bottom: 4px; }
+.step-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+/* ── FORM ELEMENTS ── */
+.field-group { margin-bottom: 18px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+.field-group label, .field-row .field-group label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--forest); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 6px;
+}
+.field-group .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+input[type=text], input[type=number], select, textarea {
+  width: 100%; font-family: var(--ff-b); font-size: 14px;
+  padding: 10px 13px; border: 1.5px solid var(--border);
+  border-radius: 7px; background: var(--white); color: var(--ink);
+  transition: var(--trans);
+}
+input[type=text]:focus, input[type=number]:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--forest);
+  box-shadow: 0 0 0 3px rgba(44,74,46,0.10);
+}
+textarea { resize: vertical; min-height: 72px; }
+input[type=range] { width: 100%; accent-color: var(--forest); }
+
+/* ── TOGGLE CHIPS ── */
+.chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.chip {
+  padding: 7px 14px; border-radius: 20px;
+  border: 1.5px solid var(--border); background: var(--white);
+  font-size: 13px; cursor: pointer; transition: var(--trans);
+  color: var(--ink); user-select: none;
+}
+.chip:hover { border-color: var(--forest); color: var(--forest); }
+.chip.on { background: var(--forest); border-color: var(--forest); color: var(--white); }
+
+/* ── RADIO CARDS ── */
+.radio-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+.radio-card {
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  padding: 14px 16px; cursor: pointer; transition: var(--trans);
+  background: var(--white);
+}
+.radio-card:hover { border-color: var(--gold); }
+.radio-card.on { border-color: var(--forest); background: var(--forest-pale); }
+.radio-card-title { font-weight: 600; font-size: 14px; color: var(--forest); margin-bottom: 3px; }
+.radio-card-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
+.section-label {
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold); font-weight: 600; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── LIVE SUMMARY STRIP ── */
+.summary-strip {
+  background: var(--forest); border-radius: var(--r);
+  padding: 16px 20px; margin-bottom: 28px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px;
+}
+.strip-item { text-align: center; }
+.strip-val { font-family: var(--ff-d); font-size: 20px; color: var(--gold-lt); line-height: 1; }
+.strip-label { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 3px; }
+
+/* ── NAV BUTTONS ── */
+.nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; gap: 12px; }
+.btn {
+  font-family: var(--ff-b); font-size: 14px; font-weight: 500;
+  padding: 11px 24px; border-radius: 7px; border: none; cursor: pointer;
+  transition: var(--trans); display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-primary { background: var(--forest); color: var(--white); }
+.btn-primary:hover { background: var(--forest-lt); }
+.btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+.btn-outline:hover { border-color: var(--forest); color: var(--forest); }
+.btn-gold { background: var(--gold); color: var(--ink); }
+.btn-gold:hover { background: var(--bark); color: var(--white); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── GENERATING STATE ── */
+.generating {
+  display: none; text-align: center; padding: 60px 20px;
+}
+.generating.active { display: block; }
+.gen-icon { font-size: 48px; animation: spin 2s linear infinite; display: inline-block; margin-bottom: 16px; }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.gen-title { font-family: var(--ff-d); font-size: 22px; color: var(--forest); margin-bottom: 8px; }
+.gen-status { font-size: 13px; color: var(--muted); }
+
+/* ── OUTPUT DOCUMENT ── */
+.output-doc { display: none; }
+.output-doc.active { display: block; }
+
+.doc-header {
+  background: var(--forest); border-radius: var(--r) var(--r) 0 0;
+  padding: 32px 36px; position: relative; overflow: hidden;
+}
+.doc-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 5 Q35 15 30 25 Q25 15 30 5Z M20 10 Q28 20 22 30 Q18 20 20 10Z M40 10 Q42 20 38 30 Q32 20 40 10Z' fill='%23FFFFFF' fill-opacity='0.03'/%3E%3C/svg%3E") repeat;
+}
+.doc-header-inner { position: relative; }
+.doc-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-lt); margin-bottom: 8px; opacity: 0.8; }
+.doc-title { font-family: var(--ff-d); font-size: 28px; color: var(--white); font-weight: 400; margin-bottom: 4px; line-height: 1.2; }
+.doc-subtitle { font-size: 13px; color: rgba(255,255,255,0.65); }
+.doc-meta { margin-top: 16px; display: flex; gap: 20px; flex-wrap: wrap; }
+.doc-meta-item { font-size: 12px; color: rgba(255,255,255,0.55); }
+.doc-meta-item strong { color: var(--gold-lt); font-weight: 600; }
+
+.doc-body {
+  background: var(--white); border: 1px solid var(--border);
+  border-top: none; border-radius: 0 0 var(--r) var(--r);
+  padding: 32px 36px;
+}
+.doc-body h2 {
+  font-family: var(--ff-d); font-size: 20px; color: var(--forest);
+  font-weight: 400; margin: 28px 0 10px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--sand);
+}
+.doc-body h2:first-child { margin-top: 0; }
+.doc-body h3 { font-size: 14px; font-weight: 600; color: var(--bark); margin: 16px 0 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.doc-body p { font-size: 14px; color: var(--ink); margin-bottom: 12px; line-height: 1.75; }
+.doc-body ul { padding-left: 18px; margin-bottom: 12px; }
+.doc-body ul li { font-size: 14px; color: var(--ink); margin-bottom: 5px; line-height: 1.6; }
+
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px; margin: 18px 0;
+}
+.metric-card {
+  background: var(--ivory); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px 14px; text-align: center;
+}
+.metric-val { font-family: var(--ff-d); font-size: 22px; color: var(--forest); line-height: 1; }
+.metric-label { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+.metric-note { font-size: 11px; color: var(--gold); margin-top: 2px; }
+
+.cost-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+.cost-table th { text-align: left; padding: 8px 12px; background: var(--ivory); color: var(--forest); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+.cost-table td { padding: 9px 12px; border-bottom: 1px solid var(--sand); color: var(--ink); }
+.cost-table td:last-child { text-align: right; font-weight: 500; }
+.cost-table tr.total td { font-weight: 700; color: var(--forest); background: var(--ivory); border-top: 2px solid var(--border); border-bottom: none; }
+.cost-table tr.profit td { font-weight: 700; color: var(--success); background: #E8F5ED; border-bottom: none; }
+.cost-table tr.loss td { font-weight: 700; color: var(--danger); background: #FDECEA; border-bottom: none; }
+
+.alert-box {
+  border-radius: 8px; padding: 14px 16px; margin: 16px 0;
+  font-size: 13px; line-height: 1.6;
+}
+.alert-info { background: var(--forest-pale); border: 1px solid #B8D4BA; color: var(--forest); }
+.alert-warn { background: #FEF9EC; border: 1px solid #F0D875; color: #7A5C00; }
+.alert-good { background: #E8F5ED; border: 1px solid #A8D5B5; color: var(--success); }
+.alert-box strong { font-weight: 600; }
+
+.viability-bar-wrap { margin: 10px 0 18px; }
+.viability-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+.viability-bar { height: 8px; background: var(--sand); border-radius: 4px; overflow: hidden; }
+.viability-fill { height: 8px; border-radius: 4px; transition: width 1s ease; }
+
+.doc-actions { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
+.leaf-div { text-align: center; color: var(--gold); font-size: 16px; letter-spacing: 8px; opacity: 0.5; margin: 20px 0; }
+
+/* ── PRINT ── */
+@media print {
+  .page-header, .doc-actions, .nav-row, .summary-strip, .step-pills, .progress-bar-wrap,
+  .chat-fab, .chat-panel { display: none !important; }
+  .output-doc { display: block !important; }
+  .doc-header { border-radius: 0; }
+  body { background: white; }
+}
+@media (max-width: 520px) {
+  .field-row { grid-template-columns: 1fr; }
+  .radio-cards { grid-template-columns: 1fr; }
+  .doc-body { padding: 20px 18px; }
+  .doc-header { padding: 22px 20px; }
+  .wizard-body { padding: 20px 14px 50px; }
+}
+
+/* ══════════════════════════════════════════
+   GROQ CHATBOT — floating panel
+   ══════════════════════════════════════════ */
+
+/* FAB bubble */
+.chat-fab {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--forest);
+  border: none; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(44,74,46,0.35);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.chat-fab:hover { transform: scale(1.07); box-shadow: 0 6px 28px rgba(44,74,46,0.45); }
+.chat-fab-icon { font-size: 24px; line-height: 1; transition: transform 0.25s ease; }
+.chat-fab.open .chat-fab-icon { transform: rotate(45deg); }
+
+/* unread badge */
+.chat-badge {
+  position: absolute; top: -3px; right: -3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--gold); border: 2px solid var(--ivory);
+  font-size: 10px; font-weight: 700; color: var(--ink);
+  display: none; align-items: center; justify-content: center;
+}
+.chat-badge.show { display: flex; }
+
+/* panel */
+.chat-panel {
+  position: fixed;
+  bottom: 92px; right: 24px;
+  width: 360px;
+  max-height: 560px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(44,74,46,0.18);
+  display: flex; flex-direction: column;
+  z-index: 999;
+  overflow: hidden;
+  transform: scale(0.92) translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.22s ease, opacity 0.22s ease;
+  transform-origin: bottom right;
+}
+.chat-panel.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* panel header */
+.cp-header {
+  background: var(--forest);
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0;
+}
+.cp-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ff-d); font-size: 16px; color: var(--forest);
+  font-weight: 600; flex-shrink: 0;
+}
+.cp-meta { flex: 1; min-width: 0; }
+.cp-name { font-size: 14px; font-weight: 600; color: var(--white); line-height: 1.2; }
+.cp-status { font-size: 11px; color: var(--gold-lt); display: flex; align-items: center; gap: 4px; }
+.cp-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; flex-shrink: 0; }
+.cp-clear {
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.5); font-size: 18px; line-height: 1;
+  padding: 2px 4px; transition: color 0.15s;
+}
+.cp-clear:hover { color: rgba(255,255,255,0.9); }
+
+/* api key bar — shown until key entered */
+.cp-key-bar {
+  padding: 10px 12px;
+  background: var(--gold-pale);
+  border-bottom: 1px solid var(--border);
+  display: flex; gap: 8px; align-items: center;
+  flex-shrink: 0;
+}
+.cp-key-bar input {
+  flex: 1; font-size: 12px; padding: 6px 10px;
+  border: 1px solid var(--border); border-radius: 6px;
+  font-family: var(--ff-b); background: var(--white);
+  color: var(--ink);
+}
+.cp-key-bar input:focus { outline: none; border-color: var(--forest); }
+.cp-key-btn {
+  padding: 6px 12px; border-radius: 6px;
+  background: var(--forest); color: var(--white);
+  border: none; cursor: pointer; font-size: 12px;
+  font-family: var(--ff-b); font-weight: 500; white-space: nowrap;
+}
+.cp-key-btn:hover { background: var(--forest-lt); }
+.cp-key-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+/* suggestions */
+.cp-suggestions {
+  padding: 8px 10px;
+  display: flex; gap: 6px; overflow-x: auto;
+  border-bottom: 1px solid var(--sand);
+  flex-shrink: 0; scrollbar-width: none;
+}
+.cp-suggestions::-webkit-scrollbar { display: none; }
+.cp-chip {
+  white-space: nowrap; padding: 5px 11px;
+  border-radius: 20px; border: 1px solid var(--border);
+  background: var(--white); font-size: 12px;
+  color: var(--forest); cursor: pointer;
+  transition: var(--trans); font-family: var(--ff-b);
+  flex-shrink: 0;
+}
+.cp-chip:hover { background: var(--forest); color: var(--white); border-color: var(--forest); }
+
+/* messages */
+.cp-msgs {
+  flex: 1; overflow-y: auto; padding: 14px 12px;
+  display: flex; flex-direction: column; gap: 10px;
+  scroll-behavior: smooth;
+}
+.cp-msg {
+  max-width: 86%; padding: 9px 13px;
+  border-radius: 14px; font-size: 13px; line-height: 1.55;
+}
+.cp-msg.bot {
+  background: var(--ivory); border: 1px solid var(--border);
+  color: var(--ink); border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+.cp-msg.user {
+  background: var(--forest); color: var(--white);
+  border-bottom-right-radius: 4px;
+  align-self: flex-end;
+}
+.cp-msg.typing { padding: 14px 16px; }
+.cp-dots { display: flex; gap: 4px; align-items: center; }
+.cp-dots span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--muted); animation: cpblink 1.2s infinite;
+}
+.cp-dots span:nth-child(2) { animation-delay: 0.2s; }
+.cp-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes cpblink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+/* wizard-nudge bubble — bot pushes a value suggestion */
+.cp-msg.nudge {
+  background: var(--forest-pale);
+  border: 1.5px solid var(--forest);
+  color: var(--forest);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  max-width: 92%;
+}
+.nudge-action {
+  margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap;
+}
+.nudge-btn {
+  padding: 5px 12px; border-radius: 6px;
+  border: 1.5px solid var(--forest);
+  background: var(--white); color: var(--forest);
+  font-size: 12px; cursor: pointer; font-family: var(--ff-b);
+  font-weight: 500; transition: var(--trans);
+}
+.nudge-btn:hover { background: var(--forest); color: var(--white); }
+
+/* input row */
+.cp-input-row {
+  display: flex; gap: 8px; padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--white); flex-shrink: 0;
+}
+.cp-input {
+  flex: 1; font-family: var(--ff-b); font-size: 13px;
+  padding: 8px 12px; border: 1.5px solid var(--border);
+  border-radius: 20px; background: var(--ivory); color: var(--ink);
+  resize: none; height: 38px; line-height: 1.4; transition: var(--trans);
+}
+.cp-input:focus { outline: none; border-color: var(--forest); background: var(--white); }
+.cp-send {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--forest); border: none; cursor: pointer;
+  color: var(--white); font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: var(--trans);
+}
+.cp-send:hover { background: var(--forest-lt); }
+.cp-send:disabled { background: var(--border); cursor: not-allowed; }
+
+@media (max-width: 420px) {
+  .chat-panel { width: calc(100vw - 20px); right: 10px; bottom: 82px; }
+  .chat-fab { right: 14px; bottom: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-eyebrow">The Laughing Forest</div>
+  <div class="page-title">Retirement Living<br><em style="font-weight:400;font-size:0.82em;opacity:0.85;">Business Model Builder</em></div>
+  <div class="page-sub">Answer a few questions — get a complete business model document</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+  <div class="step-pills" id="step-pills"></div>
+</div>
+
+<div class="wizard-body">
+
+  <!-- ── LIVE SUMMARY STRIP ── -->
+  <div class="summary-strip" id="summary-strip" style="display:none;">
+    <div class="strip-item"><div class="strip-val" id="s-units">—</div><div class="strip-label">Units</div></div>
+    <div class="strip-item"><div class="strip-val" id="s-occ">—</div><div class="strip-label">Occupancy</div></div>
+    <div class="strip-item"><div class="strip-val" id="s-rent">—</div><div class="strip-label">Monthly rent</div></div>
+    <div class="strip-item"><div class="strip-val" id="s-revenue">—</div><div class="strip-label">Monthly revenue</div></div>
+    <div class="strip-item"><div class="strip-val" id="s-margin">—</div><div class="strip-label">Est. margin</div></div>
+  </div>
+
+  <!-- ══════════════════ STEP 1 — CAPACITY ══════════════════ -->
+  <div class="step-card active" id="step-1">
+    <div class="step-heading">Capacity & accommodation</div>
+    <div class="step-desc">Start with what's available. The current property has 7 double rooms and 4 family cabins — you can convert some, all, or plan new units.</div>
+
+    <div class="section-label">Unit configuration</div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Number of resident units</label>
+        <input type="number" id="f-units" value="10" min="1" max="40" oninput="updateSummary()"/>
+        <div class="hint">Rooms converted to long-term rental</div>
+      </div>
+      <div class="field-group">
+        <label>Average unit size</label>
+        <select id="f-unitsize">
+          <option value="studio">Studio / single room</option>
+          <option value="double" selected>Double / en-suite</option>
+          <option value="cabin">Self-catering cabin</option>
+          <option value="mix">Mixed (rooms + cabins)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Target occupancy</label>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:6px;">
+        <input type="range" id="f-occ" min="50" max="100" value="80" step="5" oninput="document.getElementById('occ-val').textContent=this.value+'%';updateSummary()"/>
+        <span id="occ-val" style="font-weight:600;color:var(--forest);min-width:36px;">80%</span>
+      </div>
+      <div class="hint">At 80% = 8 of 10 units occupied. Aim for 85–90% once established.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Target resident age band</label>
+      <div class="chip-group" id="age-chips">
+        <div class="chip" onclick="toggleChip(this)">60–65</div>
+        <div class="chip on" onclick="toggleChip(this)">65–70</div>
+        <div class="chip on" onclick="toggleChip(this)">70–75</div>
+        <div class="chip" onclick="toggleChip(this)">75+ (select with care)</div>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="section-label">Care & independence level</div>
+
+    <div class="radio-cards" id="care-cards">
+      <div class="radio-card on" onclick="selectCard(this,'care-cards')" data-val="independent">
+        <div class="radio-card-title">Fully independent</div>
+        <div class="radio-card-desc">No daily check-ins. Residents come and go freely. Meals available but optional.</div>
+      </div>
+      <div class="radio-card" onclick="selectCard(this,'care-cards')" data-val="light-support">
+        <div class="radio-card-title">Light support</div>
+        <div class="radio-card-desc">Daily wellness check (knock on door), transport to clinic, help with admin if needed.</div>
+      </div>
+    </div>
+    <div class="alert-box alert-info" style="margin-top:14px;">
+      <strong>No medical care</strong> — this model explicitly excludes nursing, medication management or frailcare. Transport to the local clinic or town is included. This keeps costs low and avoids healthcare regulation.
+    </div>
+
+    <div class="nav-row">
+      <div></div>
+      <button class="btn btn-primary" onclick="goTo(2)">Next — Pricing ›</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ STEP 2 — PRICING ══════════════════ -->
+  <div class="step-card" id="step-2">
+    <div class="step-heading">Rental pricing</div>
+    <div class="step-desc">Set your monthly all-in rental. The South Coast KZN market for this type of lifestyle offering sits roughly R8,000–R18,000/month depending on inclusions.</div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label>Monthly rental — all-in (R)</label>
+        <input type="number" id="f-rent" value="12000" min="5000" max="30000" step="500" oninput="updateSummary()"/>
+        <div class="hint">Fixed monthly amount per resident — no seasonal variation</div>
+      </div>
+      <div class="field-group">
+        <label>Deposit (months)</label>
+        <select id="f-deposit">
+          <option value="1">1 month (standard)</option>
+          <option value="2" selected>2 months (furnished / long-term)</option>
+        </select>
+        <div class="hint">RHA has no statutory cap but market norm is 1–2 months. Must be held in an interest-bearing account — interest accrues to resident.</div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Meal plan included in rent</label>
+      <div class="radio-cards" id="meal-plan-cards">
+        <div class="radio-card" onclick="selectCard(this,'meal-plan-cards')" data-val="none">
+          <div class="radio-card-title">No meals</div>
+          <div class="radio-card-desc">Residents fully self-catering. Kitchen access provided.</div>
+        </div>
+        <div class="radio-card on" onclick="selectCard(this,'meal-plan-cards')" data-val="1meal">
+          <div class="radio-card-title">1 meal per day</div>
+          <div class="radio-card-desc">Typically dinner — hot communal meal, builds community.</div>
+        </div>
+        <div class="radio-card" onclick="selectCard(this,'meal-plan-cards')" data-val="2meal">
+          <div class="radio-card-title">2 meals per day</div>
+          <div class="radio-card-desc">Breakfast + dinner. Higher food cost but strong value for residents.</div>
+        </div>
+        <div class="radio-card" onclick="selectCard(this,'meal-plan-cards')" data-val="flex">
+          <div class="radio-card-title">Flexible add-on</div>
+          <div class="radio-card-desc">Meals available at extra cost per meal — residents opt in.</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="section-label">Optional extras (add-on revenue)</div>
+    <div class="chip-group" id="extras-chips">
+      <div class="chip on" onclick="toggleChip(this)" data-val="transport">Transport levy (clinic/town)</div>
+      <div class="chip on" onclick="toggleChip(this)" data-val="laundry">Weekly laundry</div>
+      <div class="chip" onclick="toggleChip(this)" data-val="wifi">Wi-Fi & DSTV</div>
+      <div class="chip on" onclick="toggleChip(this)" data-val="social">Social programme</div>
+      <div class="chip" onclick="toggleChip(this)" data-val="housekeeping">Weekly housekeeping</div>
+      <div class="chip" onclick="toggleChip(this)" data-val="golf">Golf membership subsidy</div>
+    </div>
+    <div class="hint" style="margin-top:8px;">Selected extras are bundled into the monthly rental in the model. Unselected items residents source themselves.</div>
+
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="goTo(1)">‹ Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next — Costs ›</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ STEP 3 — COSTS ══════════════════ -->
+  <div class="step-card" id="step-3">
+    <div class="step-heading">Operating costs</div>
+    <div class="step-desc">Estimate your monthly outgoings. The model will calculate viability based on these figures.</div>
+
+    <div class="section-label">Staffing</div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Cook / kitchen (R/month)</label>
+        <input type="number" id="c-cook" value="9000" step="500" min="0"/>
+        <div class="hint">Current staff — may already be employed. NMW 2026: R30.23/hr = ~R5,895/month minimum (45hr week). Skilled cook realistically R8,500–R13,000.</div>
+      </div>
+      <div class="field-group">
+        <label>Housekeeper / cleaner (R/month)</label>
+        <input type="number" id="c-clean" value="7000" step="500" min="0"/>
+        <div class="hint">NMW 2026 minimum ~R5,895/month for 45hr week. Budget R6,500–R8,500 for reliable staff.</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Maintenance / grounds (R/month)</label>
+        <input type="number" id="c-maint" value="4000" step="500" min="0"/>
+      </div>
+      <div class="field-group">
+        <label>Manager / coordinator (R/month)</label>
+        <input type="number" id="c-mgr" value="12000" step="500" min="0"/>
+        <div class="hint">Could be Debbie initially</div>
+      </div>
+    </div>
+
+    <div class="section-label">Food & consumables</div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Food cost per resident per day (R)</label>
+        <input type="number" id="c-food" value="120" step="5" min="0"/>
+        <div class="hint">Budget R110–R160/day for 2 meals (2026 KZN food costs). R120 is a realistic mid-point for decent home-style cooking.</div>
+      </div>
+      <div class="field-group">
+        <label>Consumables & household (R/month)</label>
+        <input type="number" id="c-consumables" value="3000" step="500" min="0"/>
+      </div>
+    </div>
+
+    <div class="section-label">Fixed overheads</div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Utilities — electricity, water (R/month)</label>
+        <input type="number" id="c-util" value="8000" step="500" min="0"/>
+      </div>
+      <div class="field-group">
+        <label>Insurance (R/month)</label>
+        <input type="number" id="c-insure" value="3500" step="500" min="0"/>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Transport operating cost (R/month)</label>
+        <input type="number" id="c-transport" value="4000" step="500" min="0"/>
+        <div class="hint">Fuel + vehicle maintenance</div>
+      </div>
+      <div class="field-group">
+        <label>Marketing & admin (R/month)</label>
+        <input type="number" id="c-marketing" value="2500" step="500" min="0"/>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Contingency / repairs buffer (%)</label>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:6px;">
+        <input type="range" id="c-contingency" min="2" max="20" value="10" step="1" oninput="document.getElementById('cont-val').textContent=this.value+'%'"/>
+        <span id="cont-val" style="font-weight:600;color:var(--forest);">10%</span>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="goTo(2)">‹ Back</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Next — Integration ›</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ STEP 4 — WEDDING INTEGRATION ══════════════════ -->
+  <div class="step-card" id="step-4">
+    <div class="step-heading">Wedding venue integration</div>
+    <div class="step-desc">The existing wedding business stays. This step defines how the two arms work alongside each other — for residents' benefit and revenue.</div>
+
+    <div class="section-label">Resident involvement in weddings</div>
+    <div class="chip-group" id="wedding-perks">
+      <div class="chip on" onclick="toggleChip(this)">Volunteer bartending</div>
+      <div class="chip on" onclick="toggleChip(this)">Enjoy the celebration atmosphere</div>
+      <div class="chip on" onclick="toggleChip(this)">Help with flowers / décor setup</div>
+      <div class="chip" onclick="toggleChip(this)">Paid casual work (minimum wage applies — tips are a bonus, not wages)</div>
+      <div class="chip on" onclick="toggleChip(this)">Quiet notice given — residents can opt out</div>
+    </div>
+    <div class="alert-box alert-info" style="margin-top:12px;">
+      This is entirely <strong>opt-in</strong> for residents — the weddings are a perk, not an obligation. Clear communication upfront in the lease agreement sets expectations.
+    </div>
+
+    <hr class="divider"/>
+    <div class="section-label">Wedding guest accommodation</div>
+    <div class="radio-cards" id="accom-model-cards">
+      <div class="radio-card on" onclick="selectCard(this,'accom-model-cards')" data-val="neighbours">
+        <div class="radio-card-title">Neighbour referral only</div>
+        <div class="radio-card-desc">Direct wedding guests to neighbouring short-term accommodation. Resident rooms stay permanently leased.</div>
+      </div>
+      <div class="radio-card" onclick="selectCard(this,'accom-model-cards')" data-val="hybrid">
+        <div class="radio-card-title">Keep 1–2 rooms for weddings</div>
+        <div class="radio-card-desc">Reserve a small number of rooms as short-term. Less resident capacity but maintains wedding revenue stream.</div>
+      </div>
+    </div>
+
+    <div class="field-group" style="margin-top:18px;">
+      <label>Estimated wedding revenue remaining (R/month avg)</label>
+      <input type="number" id="f-wedding-rev" value="25000" step="1000" min="0" oninput="updateSummary()"/>
+      <div class="hint">Average monthly contribution from weddings (ceremonies, packages, food). Can be zero if pivoting fully.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Number of neighbour properties for overflow accommodation</label>
+      <input type="number" id="f-neighbours" value="3" min="0" max="10"/>
+      <div class="hint">Properties you have or can formalise referral agreements with</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="goTo(3)">‹ Back</button>
+      <button class="btn btn-primary" onclick="goTo(5)">Next — Social programme ›</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ STEP 5 — SOCIAL ══════════════════ -->
+  <div class="step-card" id="step-5">
+    <div class="step-heading">Social programme & lifestyle</div>
+    <div class="step-desc">What makes this a community, not just rooms. This is a key differentiator from renting a flat — and a major reason people choose you over alternatives.</div>
+
+    <div class="section-label">Regular outings & activities</div>
+    <div class="chip-group" id="activity-chips">
+      <div class="chip on" onclick="toggleChip(this)">Bowling — Pennington</div>
+      <div class="chip on" onclick="toggleChip(this)">Golf days</div>
+      <div class="chip on" onclick="toggleChip(this)">Beach walks</div>
+      <div class="chip on" onclick="toggleChip(this)">Shopping trips — town</div>
+      <div class="chip" onclick="toggleChip(this)">Clinic transport (scheduled)</div>
+      <div class="chip" onclick="toggleChip(this)">Card games / board games</div>
+      <div class="chip" onclick="toggleChip(this)">Braai evenings</div>
+      <div class="chip" onclick="toggleChip(this)">Garden club / planting</div>
+      <div class="chip" onclick="toggleChip(this)">Movie nights</div>
+      <div class="chip" onclick="toggleChip(this)">Day trips — Durban or surrounds</div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="section-label">Community tone</div>
+    <div class="radio-cards" id="tone-cards">
+      <div class="radio-card on" onclick="selectCard(this,'tone-cards')" data-val="relaxed">
+        <div class="radio-card-title">Relaxed & organic</div>
+        <div class="radio-card-desc">Activities happen when people feel like it. No fixed schedule pressure. Real community feel.</div>
+      </div>
+      <div class="radio-card" onclick="selectCard(this,'tone-cards')" data-val="structured">
+        <div class="radio-card-title">Lightly structured</div>
+        <div class="radio-card-desc">A monthly calendar of activities. Residents know what's coming, can plan. Still flexible.</div>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="section-label">A note for the business model</div>
+    <div class="field-group">
+      <label>Owner's vision (optional — Claude uses this for tone)</label>
+      <textarea id="f-vision" placeholder="e.g. We want this to feel like a big family home on the coast, not a retirement village. Residents should wake up to birds and the smell of the ocean and feel like the luckiest people alive…"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-outline" onclick="goTo(4)">‹ Back</button>
+      <button class="btn btn-gold" onclick="generateModel()">✦ Generate business model</button>
+    </div>
+  </div>
+
+  <!-- ── GENERATING ── -->
+  <div class="generating" id="generating">
+    <div class="gen-icon">🌿</div>
+    <div class="gen-title">Building your business model…</div>
+    <div class="gen-status" id="gen-status">Gathering your inputs…</div>
+  </div>
+
+  <!-- ── OUTPUT ── -->
+  <div class="output-doc" id="output-doc">
+    <div class="doc-header">
+      <div class="doc-header-inner">
+        <div class="doc-eyebrow">The Laughing Forest · Retirement Living</div>
+        <div class="doc-title">Business Model & Feasibility Report</div>
+        <div class="doc-subtitle" id="doc-subtitle">Retirement living expansion — Elysium, South Coast KZN</div>
+        <div class="doc-meta">
+          <div class="doc-meta-item">Generated <strong id="doc-date"></strong></div>
+          <div class="doc-meta-item">Units <strong id="doc-units"></strong></div>
+          <div class="doc-meta-item">Rent <strong id="doc-rent"></strong>/month</div>
+          <div class="doc-meta-item">Target occupancy <strong id="doc-occ"></strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="doc-body">
+      <div class="metrics-grid" id="doc-metrics"></div>
+      <div id="doc-content"></div>
+    </div>
+    <div class="doc-actions" style="padding:0 36px 32px;background:var(--white);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);">
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print / Save PDF</button>
+      <button class="btn btn-outline" onclick="resetWizard()">← Start over</button>
+    </div>
+  </div>
+
+</div><!-- /wizard-body -->
+
+<!-- ══════════════════════════════════════
+     GROQ CHATBOT — floating UI
+     ══════════════════════════════════════ -->
+
+<!-- FAB trigger button -->
+<button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="Ask Debbie's assistant">
+  <div class="chat-badge" id="chat-badge">1</div>
+  <span class="chat-fab-icon">🌿</span>
+</button>
+
+<!-- Chat panel -->
+<div class="chat-panel" id="chat-panel">
+
+  <!-- Header -->
+  <div class="cp-header">
+    <div class="cp-avatar">LF</div>
+    <div class="cp-meta">
+      <div class="cp-name">Forest Guide</div>
+      <div class="cp-status"><span class="cp-dot"></span> Ask me anything about this business model</div>
+    </div>
+    <button class="cp-clear" onclick="clearChat()" title="Clear chat">✕</button>
+  </div>
+
+  <!-- Groq API key bar -->
+  <div class="cp-key-bar" id="cp-key-bar">
+    <span class="cp-key-label">Groq key:</span>
+    <input type="password" id="cp-groq-key" placeholder="gsk_…" autocomplete="off"/>
+    <button class="cp-key-btn" onclick="saveGroqKey()">Connect</button>
+  </div>
+
+  <!-- Quick suggestion chips -->
+  <div class="cp-suggestions" id="cp-suggestions">
+    <button class="cp-chip" onclick="chipSend('What triggers frail care registration in SA?')">Frail care line?</button>
+    <button class="cp-chip" onclick="chipSend('Is the existing liquor licence valid for residents?')">Liquor licence?</button>
+    <button class="cp-chip" onclick="chipSend('What occupancy do I need to break even?')">Break-even?</button>
+    <button class="cp-chip" onclick="chipSend('What zoning changes are needed?')">Zoning?</button>
+    <button class="cp-chip" onclick="chipSend('What should the lease agreement include?')">Lease must-haves?</button>
+    <button class="cp-chip" onclick="chipSend('How does the wedding venue fit with residents?')">Weddings + residents?</button>
+    <button class="cp-chip" onclick="chipSend('What insurance do I need?')">Insurance?</button>
+    <button class="cp-chip" onclick="chipSend('Can residents be involved in weddings?')">Resident involvement?</button>
+  </div>
+
+  <!-- Messages -->
+  <div class="cp-msgs" id="cp-msgs">
+    <div class="cp-msg bot">
+      Hi! 🌿 I'm the Forest Guide — I know this business model inside out, including the regulations, the liquor licensing situation, and what keeps you on the right side of the frail care line. What would you like to explore?
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="cp-input-row">
+    <textarea class="cp-input" id="cp-input" placeholder="Ask about regulations, pricing, licensing…" rows="1" onkeydown="cpHandleKey(event)"></textarea>
+    <button class="cp-send" id="cp-send" onclick="cpSend()" title="Send">➤</button>
+  </div>
+
+</div>
+
+<script>
+const STEPS = ['Capacity','Pricing','Costs','Integration','Social programme'];
+const TOTAL = STEPS.length;
+let currentStep = 1;
+
+// ── INIT PILLS ──
+function initPills() {
+  const wrap = document.getElementById('step-pills');
+  wrap.innerHTML = '';
+  STEPS.forEach((name, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'step-pill' + (i === 0 ? ' active' : '');
+    btn.textContent = (i + 1) + '. ' + name;
+    btn.onclick = () => { if (btn.classList.contains('done') || btn.classList.contains('active')) goTo(i + 1); };
+    btn.id = 'pill-' + (i + 1);
+    wrap.appendChild(btn);
+  });
+}
+
+function updatePills(step) {
+  for (let i = 1; i <= TOTAL; i++) {
+    const p = document.getElementById('pill-' + i);
+    p.className = 'step-pill' + (i < step ? ' done' : i === step ? ' active' : '');
+  }
+  document.getElementById('progress-fill').style.width = ((step - 1) / TOTAL * 100) + '%';
+}
+
+function goTo(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-' + n).classList.add('active');
+  updatePills(n);
+  if (n > 1) document.getElementById('summary-strip').style.display = 'grid';
+  updateSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── CHIP & RADIO HELPERS ──
+function toggleChip(el) { el.classList.toggle('on'); }
+function selectCard(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .radio-card').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+}
+function getSelected(groupId) {
+  const c = document.querySelector('#' + groupId + ' .radio-card.on');
+  return c ? c.dataset.val : null;
+}
+function getChips(groupId) {
+  return Array.from(document.querySelectorAll('#' + groupId + ' .chip.on')).map(c => c.textContent.trim());
+}
+
+// ── LIVE SUMMARY ──
+function updateSummary() {
+  const units = parseInt(document.getElementById('f-units').value) || 10;
+  const occ = parseInt(document.getElementById('f-occ')?.value) || 80;
+  const rent = parseInt(document.getElementById('f-rent')?.value) || 12000;
+  const weddingRev = parseInt(document.getElementById('f-wedding-rev')?.value) || 0;
+  const occupied = Math.round(units * occ / 100);
+  const monthlyRevenue = occupied * rent + weddingRev;
+  const estimatedCosts = calcTotalCosts(occupied);
+  const margin = monthlyRevenue > 0 ? Math.round((monthlyRevenue - estimatedCosts) / monthlyRevenue * 100) : 0;
+
+  document.getElementById('s-units').textContent = units;
+  document.getElementById('s-occ').textContent = occ + '%';
+  document.getElementById('s-rent').textContent = 'R' + rent.toLocaleString();
+  document.getElementById('s-revenue').textContent = 'R' + monthlyRevenue.toLocaleString();
+  document.getElementById('s-margin').textContent = margin + '%';
+}
+
+function calcTotalCosts(occupiedUnits) {
+  const cook = parseInt(document.getElementById('c-cook')?.value) || 0;
+  const clean = parseInt(document.getElementById('c-clean')?.value) || 0;
+  const maint = parseInt(document.getElementById('c-maint')?.value) || 0;
+  const mgr = parseInt(document.getElementById('c-mgr')?.value) || 0;
+  const foodDay = parseInt(document.getElementById('c-food')?.value) || 0;
+  const cons = parseInt(document.getElementById('c-consumables')?.value) || 0;
+  const util = parseInt(document.getElementById('c-util')?.value) || 0;
+  const insure = parseInt(document.getElementById('c-insure')?.value) || 0;
+  const trans = parseInt(document.getElementById('c-transport')?.value) || 0;
+  const mktg = parseInt(document.getElementById('c-marketing')?.value) || 0;
+  const contingencyPct = parseInt(document.getElementById('c-contingency')?.value) || 10;
+  const foodMonth = foodDay * occupiedUnits * 30;
+  const base = cook + clean + maint + mgr + foodMonth + cons + util + insure + trans + mktg;
+  return Math.round(base * (1 + contingencyPct / 100));
+}
+
+// ── GENERATE ──
+async function generateModel() {
+  const units = parseInt(document.getElementById('f-units').value) || 10;
+  const occ = parseInt(document.getElementById('f-occ').value) || 80;
+  const rent = parseInt(document.getElementById('f-rent').value) || 12000;
+  const deposit = parseInt(document.getElementById('f-deposit').value) || 2;
+  const unitSize = document.getElementById('f-unitsize').value;
+  const mealPlan = getSelected('meal-plan-cards');
+  const careLevel = getSelected('care-cards');
+  const accomModel = getSelected('accom-model-cards');
+  const communityTone = getSelected('tone-cards');
+  const weddingRev = parseInt(document.getElementById('f-wedding-rev')?.value) || 0;
+  const neighbours = parseInt(document.getElementById('f-neighbours')?.value) || 3;
+  const vision = document.getElementById('f-vision').value.trim();
+  const extras = getChips('extras-chips');
+  const weddingPerks = getChips('wedding-perks');
+  const activities = getChips('activity-chips');
+  const ageBands = getChips('age-chips');
+
+  const cook = parseInt(document.getElementById('c-cook').value) || 0;
+  const clean = parseInt(document.getElementById('c-clean').value) || 0;
+  const maint = parseInt(document.getElementById('c-maint').value) || 0;
+  const mgr = parseInt(document.getElementById('c-mgr').value) || 0;
+  const foodDay = parseInt(document.getElementById('c-food').value) || 0;
+  const cons = parseInt(document.getElementById('c-consumables').value) || 0;
+  const util = parseInt(document.getElementById('c-util').value) || 0;
+  const insure = parseInt(document.getElementById('c-insure').value) || 0;
+  const trans = parseInt(document.getElementById('c-transport').value) || 0;
+  const mktg = parseInt(document.getElementById('c-marketing').value) || 0;
+  const contingencyPct = parseInt(document.getElementById('c-contingency').value) || 10;
+
+  const occupied = Math.round(units * occ / 100);
+  const foodMonth = foodDay * occupied * 30;
+  const baseCosts = cook + clean + maint + mgr + foodMonth + cons + util + insure + trans + mktg;
+  const totalCosts = Math.round(baseCosts * (1 + contingencyPct / 100));
+  const rentalRevenue = occupied * rent;
+  const totalRevenue = rentalRevenue + weddingRev;
+  const netProfit = totalRevenue - totalCosts;
+  const margin = totalRevenue > 0 ? Math.round(netProfit / totalRevenue * 100) : 0;
+  const annualProfit = netProfit * 12;
+  const depositPool = units * rent * deposit;
+
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  document.getElementById('generating').classList.add('active');
+  document.getElementById('summary-strip').style.display = 'none';
+
+  const statuses = [
+    'Crunching the numbers…',
+    'Building financial projections…',
+    'Assessing market positioning…',
+    'Writing your narrative…',
+    'Polishing the document…'
+  ];
+  let si = 0;
+  const statusInterval = setInterval(() => {
+    si = (si + 1) % statuses.length;
+    document.getElementById('gen-status').textContent = statuses[si];
+  }, 1800);
+
+  const prompt = `You are writing a professional but warm business model document for The Laughing Forest — a coastal dune forest venue on the South Coast of KZN, South Africa, currently operating as a wedding venue. The owner (Debbie) is expanding into retirement living.
+
+BUSINESS CONCEPT:
+Long-term rental accommodation for people aged ${ageBands.join(', ')}. Located in Elysium, South Coast KZN — 55 minutes from Durban, in coastal dune forest 20 metres above sea level. Beautiful, peaceful, community-focused. NO medical care — just good living, good food, community, and the ocean.
+
+INPUTS:
+- Units: ${units} (${unitSize})
+- Target occupancy: ${occ}% (${occupied} residents at target)
+- Monthly rental: R${rent.toLocaleString()} per resident (all-in)
+- Deposit: ${deposit} months upfront
+- Meal plan: ${mealPlan}
+- Care level: ${careLevel}
+- Extras bundled in rent: ${extras.join(', ') || 'none specified'}
+- Wedding integration: ${accomModel === 'neighbours' ? 'All wedding accommodation via neighbour referrals — resident rooms are permanent' : 'Keep 1–2 rooms for wedding overflow'}
+- Resident wedding perks: ${weddingPerks.join(', ')}
+- Wedding revenue retained: R${weddingRev.toLocaleString()}/month average
+- Overflow accommodation: ${neighbours} neighbouring properties with referral agreements
+- Activities: ${activities.join(', ')}
+- Community tone: ${communityTone}
+${vision ? '- Owner vision: ' + vision : ''}
+
+FINANCIALS (calculated):
+- Monthly rental revenue: R${rentalRevenue.toLocaleString()}
+- Monthly wedding revenue: R${weddingRev.toLocaleString()}
+- Total monthly revenue: R${totalRevenue.toLocaleString()}
+- Monthly staff costs: R${(cook + clean + maint + mgr).toLocaleString()}
+- Monthly food cost: R${foodMonth.toLocaleString()}
+- Monthly overheads: R${(util + insure + trans + mktg + cons).toLocaleString()}
+- Contingency (${contingencyPct}%): R${Math.round(baseCosts * contingencyPct / 100).toLocaleString()}
+- Total monthly costs: R${totalCosts.toLocaleString()}
+- Net monthly profit: R${netProfit.toLocaleString()}
+- Profit margin: ${margin}%
+- Annual net profit: R${annualProfit.toLocaleString()}
+- Initial deposit income (non-refundable working capital buffer): R${depositPool.toLocaleString()}
+
+Write a business model document with the following sections. Use plain HTML with these exact tags only: <h2>, <h3>, <p>, <ul><li>, <div class="alert-box alert-info">, <div class="alert-box alert-good">, <div class="alert-box alert-warn">. No other HTML. No markdown. No code blocks.
+
+Sections to include:
+1. Executive Summary (2–3 paragraphs — warm, confident, specific to this property and concept)
+2. The Concept (what makes this different from a retirement village or care home — the Laughing Forest lifestyle proposition)
+3. Target Resident Profile (who this is for, what they want, why they choose this over alternatives)
+4. Revenue Model (explain the revenue streams with narrative — rental, weddings, extras)
+5. Cost Structure (narrative explanation of the main cost categories and how they're managed)
+6. Financial Viability Assessment (interpret the numbers honestly — is this viable? What does it depend on? Include break-even occupancy)
+7. The Wedding Venue Integration (how the two arms complement each other — resident perks, wedding guest accommodation via neighbours, no conflict)
+8. Social Programme & Community Life (describe the lifestyle, activities, what a week might look like)
+9. Regulatory & Risk Considerations (what to watch: lease agreements, no medical care boundary, zoning, insurance)
+10. Next Steps (3–5 concrete actions to move forward — realistic, specific to this property)
+
+Tone: Warm, grounded, professional. This is for a small business owner — not a corporate investor. It should feel like it was written by someone who has visited the property and understood the vision. Celebrate what makes this special. Be honest about the numbers.
+
+IMPORTANT: Break-even occupancy = the number of units that need to be occupied to cover all costs. Calculate this as: total costs / rent per unit = ${Math.ceil(totalCosts / rent)} units minimum (${Math.round(Math.ceil(totalCosts / rent) / units * 100)}% occupancy).`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': '',
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 3500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    clearInterval(statusInterval);
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'API error ' + res.status);
+    }
+
+    const data = await res.json();
+    const content = data.content?.[0]?.text || '';
+
+    document.getElementById('generating').classList.remove('active');
+    renderOutput({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content });
+
+  } catch (e) {
+    clearInterval(statusInterval);
+    document.getElementById('generating').classList.remove('active');
+    document.getElementById('gen-status').textContent = '';
+
+    // Show a fallback model if API fails
+    const fallbackContent = buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision });
+    renderOutput({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content: fallbackContent });
+    console.warn('API error, using fallback:', e.message);
+  }
+}
+
+function buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision }) {
+  const breakeven = Math.ceil(totalCosts / rent);
+  const breakevenPct = Math.round(breakeven / units * 100);
+  const viableWord = margin >= 20 ? 'strong' : margin >= 10 ? 'moderate' : margin >= 0 ? 'marginal' : 'challenging';
+  return `
+<h2>Executive Summary</h2>
+<p>The Laughing Forest Retirement Living is a proposed expansion of the existing Laughing Forest wedding venue in Elysium on the South Coast of KZN. The concept converts existing accommodation into permanent long-term rental for active, independent residents aged 60–75 — offering coastal forest living, community, good food, and easy access to the town and local clinic, without the institutional feel of a retirement village.</p>
+<p>At ${units} units with a target occupancy of ${occ}%, the model generates estimated monthly revenue of R${totalRevenue.toLocaleString()} against estimated costs of R${totalCosts.toLocaleString()}, producing a monthly net ${netProfit >= 0 ? 'profit' : 'loss'} of R${Math.abs(netProfit).toLocaleString()} — a <strong>${margin}% margin</strong>. The outlook is ${viableWord}.</p>
+${vision ? '<p><em>"' + vision + '"</em></p>' : ''}
+
+<h2>The Concept</h2>
+<p>This is not a retirement village. There are no nurses, no medical staff, no communal lounge with a television mounted too high. This is a home — in one of the most beautiful corners of the South African coast — where residents happen to be over 60 and happen to share it with people who feel the same way about sunrises over the Indian Ocean.</p>
+<p>Residents rent a private room or cabin in a coastal dune forest setting, 20 metres above sea level, where the sounds are birds and waves, not traffic. They eat together (${mealPlan === 'none' ? 'when they choose to' : mealPlan === '2meal' ? 'breakfast and dinner' : 'dinner'} in a shared kitchen and dining space), go bowling in Pennington, have a game of golf, and occasionally lend a hand at a wedding if they feel like it. The current staff stay. The atmosphere stays. The price is right.</p>
+
+<h2>Target Resident Profile</h2>
+<p>The ideal resident is 62–74, active and independent, and looking to downscale without downsizing their life. They may be recently widowed, recently retired, or simply done with a big house and a big garden. They want community without compromise — privacy when they need it, company when they want it. They like the coast, they can drive or take a lift, and they do not need a nurse.</p>
+<ul>
+  <li>Active retirees tired of maintaining a large home</li>
+  <li>People relocating from Durban or Johannesburg to the coast</li>
+  <li>Couples or singles who want to lock up and go when family visits</li>
+  <li>People who specifically want to avoid the medical / institutional feel</li>
+</ul>
+
+<h2>Revenue Model</h2>
+<p>The primary revenue stream is monthly rental at R${rent.toLocaleString()} per unit, all-inclusive. At ${occupied} occupied units (${occ}% occupancy), this generates R${(occupied * rent).toLocaleString()}/month in rental income. ${weddingRev > 0 ? 'The wedding venue continues to contribute an estimated R' + weddingRev.toLocaleString() + '/month in ceremony and catering revenue.' : ''}</p>
+<p>The deposit structure (${document.getElementById('f-deposit').value} months upfront) provides R${depositPool.toLocaleString()} in working capital at full occupancy — a meaningful buffer for the startup phase.</p>
+<div class="alert-box alert-info"><strong>Break-even point:</strong> ${breakeven} of ${units} units occupied (${breakevenPct}% occupancy). Below this, the model runs at a loss. Above it, each additional occupied unit contributes R${Math.round(rent - totalCosts / units).toLocaleString()}/month directly to profit.</div>
+
+<h2>Cost Structure</h2>
+<p>Staff costs (cook, housekeeper, maintenance, management) form the largest fixed expense. These are largely existing staff — a key advantage, as training and recruitment costs are avoided. Food costs scale with occupancy, which provides a natural hedge. Fixed overheads (utilities, insurance, transport) are relatively contained at a property of this size.</p>
+<p>A contingency of ${document.getElementById('c-contingency').value}% has been applied to all costs to account for unplanned repairs, price increases, and voids.</p>
+
+<h2>Financial Viability Assessment</h2>
+<p>The model produces a <strong>${viableWord}</strong> financial picture at the assumed inputs. A ${margin}% margin ${margin >= 20 ? 'is healthy for a small hospitality business and provides meaningful owner income.' : margin >= 10 ? 'is acceptable but leaves limited buffer — reducing costs or increasing occupancy or rent would strengthen the position.' : margin >= 0 ? 'is tight. Careful cost control and rapid occupancy growth are essential.' : 'means the model loses money at these inputs. Either the rent needs to increase, costs need to reduce, or occupancy assumptions need to be revisited.'}</p>
+<div class="alert-box ${margin >= 15 ? 'alert-good' : margin >= 0 ? 'alert-warn' : 'alert-info'}"><strong>Key sensitivity:</strong> Occupancy is the single biggest driver. Every additional resident above break-even (${breakeven} units) adds R${Math.round(rent - totalCosts / units).toLocaleString()} to monthly profit. Getting to ${Math.round(breakevenPct + 10)}% occupancy quickly is the most important early milestone.</div>
+
+<h2>Wedding Venue Integration</h2>
+<p>The wedding venue continues to operate as before. On wedding days, residents are given friendly advance notice. Participation is entirely voluntary — some residents may love being part of the occasion by helping behind the bar or with flowers; others will simply enjoy the festive atmosphere from their stoep. No resident is obligated to engage, and no resident should ever feel that a wedding has disrupted their home.</p>
+<p>Wedding guest accommodation is handled via referral agreements with ${document.getElementById('f-neighbours').value} neighbouring properties in Elysium — maintaining revenue for the community while keeping resident rooms permanently leased and occupied.</p>
+
+<h2>Social Programme & Community Life</h2>
+<p>The rhythm of life here is gentle and varied. ${activities.length > 0 ? 'Planned activities include: ' + activities.join(', ') + '.' : ''} The beach is minutes away on foot. Town and the clinic are reachable by the property vehicle on scheduled days. Braais happen when someone feels like it. Golf is on Tuesdays if there's interest.</p>
+<p>The communal dining table is the heartbeat of the community — shared meals create natural conversation and connection without forcing it. Residents who want solitude have their own private space. Those who want company know exactly where to find it.</p>
+
+<h2>Regulatory & Risk Considerations</h2>
+<ul>
+  <li><strong>Lease agreements:</strong> Long-term residential leases (minimum 6–12 months recommended). Clearly define the no-medical-care boundary, meal arrangements, and house rules. Note: under the Consumer Protection Act, residents on a fixed-term lease may cancel with 20 business days' notice — include a reasonable early-exit penalty clause. Consult a property attorney.</li>
+  <li><strong>Zoning:</strong> Confirm the property zoning permits mixed-use residential rental. The existing hospitality zoning may already accommodate this — check with the Ugu District Municipality or appoint a registered town planner (SACPLAN).</li>
+  <li><strong>Insurance:</strong> Existing venue insurance must be extended before the first resident moves in. Public liability for permanent residents, employer's liability, and contents/damage coverage are all required — brief your insurer in writing.</li>
+  <li><strong>Health boundary:</strong> The no-medical-care position is a strength (avoids Older Persons Act registration) but must be clearly documented in the lease. Residents should provide their own GP details and emergency contacts at move-in.</li>
+  <li><strong>Deposit handling:</strong> All deposits must be held in a separate interest-bearing account. Interest accrues to the resident. Return within 14 days after joint outgoing inspection (21 days if no joint inspection). Normal wear and tear may not be deducted — only tenant-caused damage.</li>
+</ul>
+
+<h2>Next Steps</h2>
+<ul>
+  <li><strong>1. Legal groundwork:</strong> Consult a property attorney on lease agreements and the no-care boundary. Confirm zoning with the local municipality.</li>
+  <li><strong>2. Insurance review:</strong> Brief your insurer on the change of use and get a revised quote for mixed-use hospitality and permanent residential.</li>
+  <li><strong>3. Pilot with 2–3 residents:</strong> Don't wait for all ${units} units to be ready. Start with a soft launch — 2 or 3 trusted early residents while refining the model.</li>
+  <li><strong>4. Neighbour referral agreements:</strong> Formalise the overflow accommodation arrangement with neighbouring properties before the first wedding under the new model.</li>
+  <li><strong>5. Marketing approach:</strong> Word of mouth is the most powerful channel for this demographic. A simple one-page website, active presence on Facebook (this age group is highly active there), and listings on Property24 (long-term rentals), PrivateProperty, and Gumtree are practical starting points. Consider an editorial feature in a KZN lifestyle publication — the venue's story sells itself.</li>
+</ul>`;
+}
+
+function renderOutput({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content }) {
+  const now = new Date();
+  document.getElementById('doc-date').textContent = now.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('doc-units').textContent = units;
+  document.getElementById('doc-rent').textContent = 'R' + rent.toLocaleString();
+  document.getElementById('doc-occ').textContent = occ + '%';
+
+  const profitColor = netProfit >= 0 ? 'var(--success)' : 'var(--danger)';
+  document.getElementById('doc-metrics').innerHTML = `
+    <div class="metric-card">
+      <div class="metric-val">R${(totalRevenue).toLocaleString()}</div>
+      <div class="metric-label">Monthly revenue</div>
+      <div class="metric-note">${occupied} residents + weddings</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val">R${totalCosts.toLocaleString()}</div>
+      <div class="metric-label">Monthly costs</div>
+      <div class="metric-note">incl. ${document.getElementById('c-contingency').value}% contingency</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val" style="color:${profitColor}">R${Math.abs(netProfit).toLocaleString()}</div>
+      <div class="metric-label">Monthly ${netProfit >= 0 ? 'profit' : 'loss'}</div>
+      <div class="metric-note">${margin}% margin</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val" style="color:${profitColor}">R${Math.abs(annualProfit).toLocaleString()}</div>
+      <div class="metric-label">Annual ${annualProfit >= 0 ? 'profit' : 'loss'}</div>
+      <div class="metric-note">at ${occ}% occupancy</div>
+    </div>
+  `;
+
+  document.getElementById('doc-content').innerHTML = content;
+  document.getElementById('output-doc').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetWizard() {
+  document.getElementById('output-doc').classList.remove('active');
+  document.getElementById('summary-strip').style.display = 'none';
+  currentStep = 1;
+  document.getElementById('step-1').classList.add('active');
+  updatePills(1);
+  document.getElementById('progress-fill').style.width = '0%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+initPills();
+
+/* ══════════════════════════════════════════════════════════
+   GROQ CHATBOT — Forest Guide
+   Uses Groq free tier: llama-3.3-70b-versatile
+   ══════════════════════════════════════════════════════════ */
+
+// ── GROQ MODEL ──
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
+const GROQ_ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
+
+// ── PRE-BUILT KNOWLEDGE BASE ──
+// This is compiled from all research and business model discussions.
+// No user needs to provide this — it is baked in.
+const FOREST_GUIDE_SYSTEM = `You are "Forest Guide" — the expert AI assistant built into The Laughing Forest Retirement Living Business Model Wizard. You have deep knowledge of this specific business, the South African regulatory environment, and practical hospitality business advice.
+
+ABOUT THE BUSINESS:
+The Laughing Forest is an established wedding and events venue in Elysium, South Coast KZN, 55 minutes from Durban, situated in coastal dune forest 20 metres above sea level. Owner: Debbie. The business is expanding into long-term retirement living for people aged 60–75.
+
+THE RETIREMENT LIVING CONCEPT:
+- Long-term rental (NOT frail care, NOT assisted living, NOT a retirement village)
+- Residents are fully independent, aged 60–75
+- 1–2 meals per day provided by existing kitchen staff
+- Transport to local clinic and town for shopping (scheduled days)
+- Social programme: bowling at Pennington, golf, beach walks, braais, day trips
+- Current staff stay on — cook, housekeeper, maintenance, manager (Debbie)
+- No medical care of any kind — this is a deliberate and legally important position
+- The wedding venue continues operating alongside — residents can volunteer at bar/décor if they wish (fully opt-in)
+- Wedding guest accommodation: overflow to neighbouring properties via referral agreements
+- Property has 7 double/twin rooms, 4 self-catering family cabins, 1 honeymoon suite — some or all converting to permanent resident rooms
+
+FRAIL CARE REGULATION — CRITICAL KNOWLEDGE:
+The Older Persons Act 13 of 2006 governs care facilities for older people in South Africa.
+
+WHAT TRIGGERS REGISTRATION (must AVOID):
+- Providing accommodation AND a 24-hour care service together
+- Assisting residents with Activities of Daily Living (ADLs): bathing, dressing, toileting, eating assistance, moving around, getting in/out of bed
+- Any nursing, health monitoring, medication management or dispensing — even informally
+- Marketing language: "care", "frail care", "nursing", "assisted living", "24-hour supervision", "monitored"
+- Accepting residents at intake who already need ADL assistance
+
+WHAT IS SAFE (this model stays here):
+- Providing accommodation only (landlord relationship)
+- Providing meals as an ancillary service — this is hospitality, not care
+- Transport to clinic — this is a service, not medical care
+- Social activities and outings — this is community life, not care
+- A knock on the door / daily wellness check (light, not clinical)
+- The Older Persons Act distinguishes sharply between residential facilities (regulated) and landlords who happen to have older tenants (not regulated)
+
+MINIMAL OBLIGATION THAT DOES APPLY:
+- Anyone providing accommodation for remuneration to older persons (even outside a registered facility) must keep a basic register of residents and submit it annually to the Director-General of Social Development — name, age, emergency contacts, GP details, move-in date
+- This is a light admin requirement, not a care compliance framework
+
+PENDING LEGISLATION TO WATCH:
+- The Older Persons Amendment Bill (passed 2022, not yet fully commenced) proposes adding "independent living" and "assisted living" as lighter registered categories. Not yet law. Smart to register a proper legal entity now anyway.
+
+HEALTH DECLINE CLAUSE:
+- The lease agreement must include a clause stating that if a resident's health declines to the point where ADL assistance is needed, the lease is reviewed and may be terminated with appropriate notice. This sounds tough but is the legally and ethically correct boundary. Residents must know this before moving in.
+
+LIQUOR LICENSING — IMPORTANT:
+The Laughing Forest already holds a valid liquor licence. This is a significant asset.
+
+CURRENT LICENCE (wedding venue):
+- The existing on-consumption licence covers the sale of liquor to guests at events on the premises. This is issued by the KwaZulu-Natal Liquor Authority (now merged into KZNERA — KwaZulu-Natal Economic Regulatory Authority).
+- KZN liquor licence applications are processed by KZNERA. Required supporting documents typically include: tax clearance certificate, police clearance, zoning certificate or consent use approval, sketch plans of the premises, proof of municipal business licence, and proof of payment of application fee. Check KZNERA's current requirements directly at kznera.gov.za as forms and processes are updated periodically — do not rely on older form numbers circulating online.
+
+HOW THE LICENCE APPLIES TO THE RETIREMENT LIVING MODEL:
+- Residents who are long-term tenants are NOT "guests at an event" under the licence terms
+- However, the existing licence DOES allow the venue to continue serving liquor at weddings — this revenue stream is unaffected
+- For residents: they purchase their own alcohol (off-consumption) for personal use in their rooms/cabins — this requires NO licence
+- For communal resident dinners: if wine or beer is included as part of a meal (not sold separately at a bar), this sits in a grey area — the safest interpretation is that it is covered under the existing on-consumption licence since the property is already licenced, but Debbie should confirm this with KZNERA specifically
+- If a "residents' bar" is ever opened (residents buying drinks at a bar counter on scheduled evenings), this would likely need explicit coverage under the existing licence or a licence amendment — check with KZNERA
+- The existing licence is a major competitive advantage — new operators wait 6–12 months for a KZN licence. Protecting and maintaining it is a business priority.
+
+LICENCE MAINTENANCE RULES (must follow to keep it):
+- Licence conditions must be met at all times — trading hours, premises description, responsible person named
+- Any change of use or structural change to the premises must be declared to KZNERA
+- The named licence holder must remain compliant — tax clearance, no criminal convictions
+- If the business entity changes (e.g. from sole prop to Pty Ltd), the licence must be transferred — this is an application process, not automatic
+
+ZONING & LAND USE:
+- Current zoning: likely hospitality/guest house (confirms via Ugu District Municipality)
+- Long-term residential rental is a different land use category — requires either:
+  (a) Consent use application: 3–6 months, lower cost (~R15,000–R35,000 in town planner fees + municipal fees), applies to current owner, doesn't permanently change title
+  (b) Rezoning: 6–18 months, more permanent, follows the property title
+- Mixed-use (hospitality events + long-term residential) consent use is a recognised category
+- The ongoing wedding business actually helps the application — shows established, compliant hospitality use
+- Engage a registered town planner to prepare the application (KZN town planners are registered with SACPLAN)
+
+RENTAL HOUSING ACT 50 OF 1999 (amended 2014):
+- Written lease agreements are strongly recommended (amendment may make them mandatory)
+- Lease must include: party names + IDs, property description, rental amount, escalation terms, deposit (amount + interest-bearing account requirement), lease period, notice period, rights and obligations of both parties
+- Deposits: held in a separate interest-bearing account, interest accrues to tenant. Return timelines under the RHA: (1) 7 days if joint inspection done and no damages; (2) 14 days if joint inspection done and deductions needed (after repairs completed); (3) 21 days if no joint inspection took place. Normal wear and tear may NOT be deducted — only tenant-caused damage with receipts. Landlord must provide proof of the interest-bearing account within 14 days of receiving the deposit.
+- Rent increases must be reasonable and market-related, with written notice
+- Eviction requires court process under PIE (Prevention of Illegal Eviction Act) — courts are particularly slow and sympathetic toward elderly tenants; strong lease terms are the best protection
+- Consumer Protection Act (CPA): residents on a fixed-term lease have the right to cancel with 20 business days' notice. A reasonable early-cancellation penalty may be charged — this must be specified in the lease. The lease cannot waive this CPA right.
+- Meals and transport bundled into rent: itemise separately in the lease or a service schedule attached to the lease — protects both parties
+
+INSURANCE:
+- Existing venue public liability does NOT automatically cover permanent residents — brief insurer before first resident moves in
+- Need: public liability extended for permanent residents, confirm employer's liability covers all staff roles, clarify contents/damage position for resident rooms, confirm coverage for residents' visitors
+- Medical evacuation / emergency response is NOT your obligation but consider signposting residents to a private emergency service like ER24 or Netcare 911
+
+FINANCIAL BENCHMARKS:
+- South Coast KZN retirement-style long-term rental: R8,000–R18,000/month all-in
+- Food cost for 2 meals/day: R110–R160 per resident per day (2026 KZN pricing; R120–R130 is a realistic budget for home-style cooking at this scale)
+- Staff in KZN coastal area (2026 NMW = R30.23/hr = ~R5,895/month minimum for 45hr week): cook R8,500–R13,000/month depending on experience; housekeeper/cleaner R6,500–R8,500/month; maintenance R5,500–R7,500/month. Budget above NMW minimum to attract and retain reliable staff — the difference between a good hire and a poor one matters enormously in a small community setting.
+- Transport operating costs (vehicle, fuel, maintenance): R3,500–R6,000/month depending on vehicle age
+- Contingency buffer: minimum 10%, ideally 15% for a property of this age
+- Deposit pool at 2 months per unit = meaningful working capital buffer for startup phase
+- Break-even sensitivity: occupancy is the single biggest driver — every resident above break-even goes almost entirely to profit once fixed costs are covered
+
+MARKETING:
+- Primary channel for 60–75 age group: word of mouth, family referrals
+- Digital: simple website, Facebook (this demographic IS on Facebook), WhatsApp referral network
+- Listing platforms: Property24 (long-term rentals), PrivateProperty.co.za, Gumtree South Africa. For word-of-mouth reach: Facebook community groups (KZN lifestyle, South Coast, active retirees in SA), and WhatsApp networks through churches, golf clubs, and bowling clubs in the region.
+- Listing platforms: Property24 (long-term rentals section), PrivateProperty, Gumtree — all have reach with this demographic and their adult children who help with decisions. Facebook groups for KZN expats, South Coast community groups, and "retiring in SA" communities are highly effective.
+- The coastal location and wedding venue integration are powerful differentiators — lean on these hard
+- "Not a retirement village" is a positioning statement, not just a disclaimer — it's what many people in this age group are actively looking for
+- Consider a feature story pitch to a KZN lifestyle publication (Sawubona, Getaway, or a regional paper) — the Laughing Forest concept is genuinely editorial-worthy
+
+LEGAL ENTITY:
+- Strongly recommended: register a (Pty) Ltd or trust to operate the residential side separately from the wedding venue
+- Separates liability between the two business arms
+- The pending Older Persons Amendment Bill will likely require this for any registered residential care provider
+- VAT registration: compulsory if taxable turnover exceeds R1 million in any consecutive 12-month period. Voluntary registration is possible below this threshold and can be beneficial — it allows claiming VAT input credits on operational expenses (food, maintenance, insurance, etc.), which may exceed the VAT collected on rent, resulting in a net VAT refund position. Worth discussing with an accountant early.
+- NMW and tips: under the National Minimum Wage Act, tips may NOT be counted toward the minimum wage (R30.23/hour from March 2026). If residents do any casual paid work at weddings, they must receive at least NMW as a base wage — tips are a bonus on top, never a substitute for wages. Failure to pay NMW carries penalties of up to twice the underpaid amount.
+
+BEHAVIOUR RULES:
+- Be warm, practical, and direct — like a trusted advisor who knows this property
+- When asked about numbers, always contextualise them against the wizard inputs if the user mentions them
+- When a question touches on something the wizard can help with, suggest the relevant wizard step
+- When asked about regulation, always be clear about what is safe vs what crosses the line
+- Keep answers focused and practical — 3–5 sentences usually enough unless the question needs more
+- If you don't know something specific (e.g. exact current municipal fees), say so and direct them to the right authority
+- Never give legal or financial advice as a substitute for a professional — always recommend consulting an attorney, accountant, or town planner for final decisions
+- You can suggest adjusting wizard inputs when relevant (e.g. "that would push your contingency higher — you might want to increase that slider to 15%")`;
+
+// ── STATE ──
+let cpHistory = [];
+let cpBusy = false;
+let cpGroqKey = localStorage.getItem('lf_groq_key') || '';
+let chatOpen = false;
+let chatHasUnread = true;
+
+// ── INIT ──
+(function initChat() {
+  if (cpGroqKey) {
+    document.getElementById('cp-key-bar').style.display = 'none';
+  }
+  // Show unread badge on load after 2s
+  setTimeout(() => {
+    if (!chatOpen) document.getElementById('chat-badge').classList.add('show');
+  }, 2000);
+})();
+
+// ── TOGGLE ──
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chat-fab').classList.toggle('open', chatOpen);
+  document.getElementById('chat-panel').classList.toggle('open', chatOpen);
+  document.getElementById('chat-badge').classList.remove('show');
+  chatHasUnread = false;
+  if (chatOpen) setTimeout(() => document.getElementById('cp-input').focus(), 250);
+}
+
+// ── SAVE KEY ──
+function saveGroqKey() {
+  const k = document.getElementById('cp-groq-key').value.trim();
+  if (!k || !k.startsWith('gsk_')) {
+    cpAddMsg('bot', '⚠ That doesn\'t look like a valid Groq key (should start with gsk_). Get a free key at console.groq.com');
+    return;
+  }
+  cpGroqKey = k;
+  localStorage.setItem('lf_groq_key', k);
+  document.getElementById('cp-key-bar').style.display = 'none';
+  cpAddMsg('bot', 'Connected! 🌿 I\'m ready to help. Ask me anything about the business model, regulations, or licensing.');
+}
+
+// ── CLEAR ──
+function clearChat() {
+  cpHistory = [];
+  const msgs = document.getElementById('cp-msgs');
+  msgs.innerHTML = '';
+  cpAddMsg('bot', 'Chat cleared. What would you like to explore?');
+}
+
+// ── CHIP SEND ──
+function chipSend(text) {
+  document.getElementById('cp-input').value = text;
+  cpSend();
+}
+
+// ── SEND ──
+async function cpSend() {
+  if (cpBusy) return;
+  const input = document.getElementById('cp-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  if (!cpGroqKey) {
+    document.getElementById('cp-key-bar').style.display = 'flex';
+    cpAddMsg('bot', 'Please enter your free Groq API key above to activate me. Get one at console.groq.com — it\'s free and takes 30 seconds.');
+    return;
+  }
+
+  input.value = '';
+  cpAddMsg('user', text);
+  cpHistory.push({ role: 'user', content: text });
+
+  // Hide suggestions after first message
+  document.getElementById('cp-suggestions').style.display = 'none';
+
+  showTyping();
+  cpBusy = true;
+  document.getElementById('cp-send').disabled = true;
+
+  // Enrich prompt with current wizard state
+  const wizardContext = getWizardContext();
+  const messages = [
+    { role: 'system', content: FOREST_GUIDE_SYSTEM + (wizardContext ? '\n\nCURRENT WIZARD STATE:\n' + wizardContext : '') },
+    ...cpHistory
+  ];
+
+  try {
+    const res = await fetch(GROQ_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + cpGroqKey
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages,
+        max_tokens: 512,
+        temperature: 0.65
+      })
+    });
+
+    removeTyping();
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = err.error?.message || ('API error ' + res.status);
+      if (res.status === 401) {
+        cpAddMsg('bot', '⚠ Invalid Groq API key. Please check it and reconnect.');
+        document.getElementById('cp-key-bar').style.display = 'flex';
+        cpGroqKey = ''; localStorage.removeItem('lf_groq_key');
+      } else {
+        cpAddMsg('bot', '⚠ ' + msg);
+      }
+      return;
+    }
+
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || 'Something went wrong — please try again.';
+
+    cpHistory.push({ role: 'assistant', content: reply });
+
+    // Check if reply contains a wizard nudge
+    const nudge = extractNudge(reply, text);
+    if (nudge) {
+      cpAddMsg('bot', reply);
+      addNudgeCard(nudge);
+    } else {
+      cpAddMsg('bot', reply);
+    }
+
+  } catch (e) {
+    removeTyping();
+    cpAddMsg('bot', 'Network error — check your connection and try again.');
+  } finally {
+    cpBusy = false;
+    document.getElementById('cp-send').disabled = false;
+  }
+}
+
+// ── GET WIZARD STATE FOR CONTEXT ──
+function getWizardContext() {
+  try {
+    const units = document.getElementById('f-units')?.value;
+    const occ = document.getElementById('f-occ')?.value;
+    const rent = document.getElementById('f-rent')?.value;
+    const mealPlan = document.querySelector('#meal-plan-cards .radio-card.on')?.dataset.val;
+    const careLevel = document.querySelector('#care-cards .radio-card.on')?.dataset.val;
+    const contingency = document.getElementById('c-contingency')?.value;
+    const weddingRev = document.getElementById('f-wedding-rev')?.value;
+    const cook = document.getElementById('c-cook')?.value;
+    const mgr = document.getElementById('c-mgr')?.value;
+    const step = currentStep;
+
+    return [
+      `Current wizard step: ${step} of 5`,
+      units ? `Units planned: ${units}` : '',
+      occ ? `Target occupancy: ${occ}%` : '',
+      rent ? `Monthly rent: R${parseInt(rent).toLocaleString()}` : '',
+      mealPlan ? `Meal plan: ${mealPlan}` : '',
+      careLevel ? `Care level: ${careLevel}` : '',
+      contingency ? `Contingency buffer: ${contingency}%` : '',
+      weddingRev ? `Wedding revenue retained: R${parseInt(weddingRev).toLocaleString()}/month` : '',
+      cook && mgr ? `Staff costs visible: cook R${cook}, manager R${mgr}` : ''
+    ].filter(Boolean).join('\n');
+  } catch { return ''; }
+}
+
+// ── NUDGE DETECTION — look for wizard field suggestions in the reply ──
+function extractNudge(reply, question) {
+  const r = reply.toLowerCase();
+  const q = question.toLowerCase();
+
+  // Contingency nudge
+  if ((r.includes('contingency') || r.includes('buffer')) && (r.includes('15%') || r.includes('increase'))) {
+    return { type: 'contingency', label: 'Set contingency to 15%', action: () => {
+      const el = document.getElementById('c-contingency');
+      if (el) { el.value = 15; document.getElementById('cont-val').textContent = '15%'; }
+      goTo(3);
+    }};
+  }
+  // Break-even / units nudge
+  if (r.includes('occupancy') && r.includes('85') && !r.includes('not')) {
+    return { type: 'occ', label: 'Set occupancy target to 85%', action: () => {
+      const el = document.getElementById('f-occ');
+      if (el) { el.value = 85; document.getElementById('occ-val').textContent = '85%'; updateSummary(); }
+      goTo(1);
+    }};
+  }
+  return null;
+}
+
+function addNudgeCard(nudge) {
+  const msgs = document.getElementById('cp-msgs');
+  const d = document.createElement('div');
+  d.className = 'cp-msg nudge';
+  d.innerHTML = `💡 <strong>Wizard suggestion:</strong> ${nudge.label}
+    <div class="nudge-action">
+      <button class="nudge-btn" onclick="this.closest('.nudge').style.opacity='0.5';(${nudge.action.toString()})()">Apply in wizard</button>
+    </div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ── MESSAGE HELPERS ──
+function cpAddMsg(who, text) {
+  const msgs = document.getElementById('cp-msgs');
+  const d = document.createElement('div');
+  d.className = 'cp-msg ' + who;
+  d.textContent = text;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('cp-msgs');
+  const d = document.createElement('div');
+  d.className = 'cp-msg bot typing';
+  d.id = 'cp-typing';
+  d.innerHTML = '<div class="cp-dots"><span></span><span></span><span></span></div>';
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('cp-typing');
+  if (t) t.remove();
+}
+
+function cpHandleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); cpSend(); }
+}
+
+</script>
+</body>
+</html>
