@@ -693,44 +693,116 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
 
   <!-- ══════════════════ STEP 4 — WEDDING INTEGRATION ══════════════════ -->
   <div class="step-card" id="step-4">
-    <div class="step-heading">Wedding venue integration</div>
-    <div class="step-desc">The existing wedding business stays. This step defines how the two arms work alongside each other — for residents' benefit and revenue.</div>
+    <div class="step-heading">Wedding venue — what's the plan?</div>
+    <div class="step-desc">This is the most significant strategic decision. Choose your posture — the rest of this step and the generated model will adapt accordingly.</div>
 
-    <div class="section-label">Resident involvement in weddings</div>
-    <div class="chip-group" id="wedding-perks">
-      <div class="chip on" onclick="toggleChip(this)">Volunteer bartending</div>
-      <div class="chip on" onclick="toggleChip(this)">Enjoy the celebration atmosphere</div>
-      <div class="chip on" onclick="toggleChip(this)">Help with flowers / décor setup</div>
-      <div class="chip" onclick="toggleChip(this)">Paid casual work (minimum wage applies — tips are a bonus, not wages)</div>
-      <div class="chip on" onclick="toggleChip(this)">Quiet notice given — residents can opt out</div>
-    </div>
-    <div class="alert-box alert-info" style="margin-top:12px;">
-      This is entirely <strong>opt-in</strong> for residents — the weddings are a perk, not an obligation. Clear communication upfront in the lease agreement sets expectations.
-    </div>
-
-    <hr class="divider"/>
-    <div class="section-label">Wedding guest accommodation</div>
-    <div class="radio-cards" id="accom-model-cards">
-      <div class="radio-card on" onclick="selectCard(this,'accom-model-cards')" data-val="neighbours">
-        <div class="radio-card-title">Neighbour referral only</div>
-        <div class="radio-card-desc">Direct wedding guests to neighbouring short-term accommodation. Resident rooms stay permanently leased.</div>
+    <div class="section-label">Wedding venue posture</div>
+    <div class="radio-cards" style="grid-template-columns:1fr 1fr 1fr;" id="wedding-posture-cards">
+      <div class="radio-card on" onclick="setWeddingPosture('keep')" data-val="keep">
+        <div class="radio-card-title">✓ Keep it running</div>
+        <div class="radio-card-desc">Weddings continue alongside retirement living. Two complementary income streams.</div>
       </div>
-      <div class="radio-card" onclick="selectCard(this,'accom-model-cards')" data-val="hybrid">
-        <div class="radio-card-title">Keep 1–2 rooms for weddings</div>
-        <div class="radio-card-desc">Reserve a small number of rooms as short-term. Less resident capacity but maintains wedding revenue stream.</div>
+      <div class="radio-card" onclick="setWeddingPosture('wind')" data-val="wind">
+        <div class="radio-card-title">↓ Wind it down</div>
+        <div class="radio-card-desc">Phase out weddings over time as retirement living grows. Honour existing bookings.</div>
+      </div>
+      <div class="radio-card" onclick="setWeddingPosture('drop')" data-val="drop">
+        <div class="radio-card-title">✕ Drop it completely</div>
+        <div class="radio-card-desc">Full pivot. Retirement living only — no future wedding bookings accepted.</div>
       </div>
     </div>
 
-    <div class="field-group" style="margin-top:18px;">
-      <label>Estimated wedding revenue remaining (R/month avg)</label>
-      <input type="number" id="f-wedding-rev" value="25000" step="1000" min="0" oninput="updateSummary()"/>
-      <div class="hint">Average monthly contribution from weddings (ceremonies, packages, food). Can be zero if pivoting fully.</div>
+    <!-- KEEP: shown when wedding venue continues -->
+    <div id="wedding-keep-section">
+      <div class="alert-box alert-good" style="margin-top:14px;">
+        Running both arms is the strongest financial position — wedding revenue offsets fixed costs and gives you a buffer while the retirement living side reaches full occupancy.
+      </div>
+
+      <hr class="divider"/>
+      <div class="section-label">Resident involvement in weddings</div>
+      <div class="chip-group" id="wedding-perks">
+        <div class="chip on" onclick="toggleChip(this)">Volunteer bartending</div>
+        <div class="chip on" onclick="toggleChip(this)">Enjoy the celebration atmosphere</div>
+        <div class="chip on" onclick="toggleChip(this)">Help with flowers / décor setup</div>
+        <div class="chip" onclick="toggleChip(this)">Paid casual work (minimum wage applies — tips are a bonus, not wages)</div>
+        <div class="chip on" onclick="toggleChip(this)">Quiet notice given — residents can opt out</div>
+      </div>
+      <div class="alert-box alert-info" style="margin-top:12px;">
+        This is entirely <strong>opt-in</strong> for residents — the weddings are a perk, not an obligation. Clear communication upfront in the lease agreement sets expectations.
+      </div>
+
+      <hr class="divider"/>
+      <div class="section-label">Wedding guest accommodation</div>
+      <div class="radio-cards" id="accom-model-cards">
+        <div class="radio-card on" onclick="selectCard(this,'accom-model-cards')" data-val="neighbours">
+          <div class="radio-card-title">Neighbour referral only</div>
+          <div class="radio-card-desc">Direct wedding guests to neighbouring short-term accommodation. Resident rooms stay permanently leased.</div>
+        </div>
+        <div class="radio-card" onclick="selectCard(this,'accom-model-cards')" data-val="hybrid">
+          <div class="radio-card-title">Keep 1–2 rooms for weddings</div>
+          <div class="radio-card-desc">Reserve a small number of rooms as short-term. Less resident capacity but maintains wedding accommodation revenue.</div>
+        </div>
+      </div>
+
+      <div class="field-group" style="margin-top:18px;">
+        <label>Estimated wedding revenue (R/month avg)</label>
+        <input type="number" id="f-wedding-rev" value="25000" step="1000" min="0" oninput="updateSummary()"/>
+        <div class="hint">Average monthly contribution from weddings — ceremonies, packages, catering. Typically 2–4 events/month on the South Coast.</div>
+      </div>
+
+      <div class="field-group">
+        <label>Number of neighbour properties for overflow accommodation</label>
+        <input type="number" id="f-neighbours" value="3" min="0" max="10"/>
+        <div class="hint">Properties you have or can formalise referral agreements with</div>
+      </div>
     </div>
 
-    <div class="field-group">
-      <label>Number of neighbour properties for overflow accommodation</label>
-      <input type="number" id="f-neighbours" value="3" min="0" max="10"/>
-      <div class="hint">Properties you have or can formalise referral agreements with</div>
+    <!-- WIND DOWN: phased exit -->
+    <div id="wedding-wind-section" style="display:none;">
+      <div class="alert-box alert-warn" style="margin-top:14px;">
+        <strong>Phased wind-down:</strong> honour all existing bookings, set a cut-off date for new wedding enquiries, and use the transition period to reach retirement living occupancy. This is the lowest-risk path if you're uncertain.
+      </div>
+      <div class="field-group" style="margin-top:18px;">
+        <label>Estimated wedding revenue during wind-down (R/month avg)</label>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <input type="number" id="f-wind-rev-display" value="10000" step="1000" min="0"
+            oninput="document.getElementById('f-wedding-rev').value=this.value;updateSummary();"
+            style="width:100%;"/>
+        </div>
+        <div class="hint">Declining revenue as existing bookings are fulfilled but no new ones are taken. Model conservatively — use 30–50% of your current average.</div>
+      </div>
+      <div class="field-group">
+        <label>Estimated months to full wind-down</label>
+        <select id="f-wind-months">
+          <option value="3">3 months</option>
+          <option value="6" selected>6 months</option>
+          <option value="12">12 months</option>
+          <option value="18">18 months</option>
+        </select>
+        <div class="hint">How long until the last wedding booking is fulfilled</div>
+      </div>
+      <div class="alert-box alert-info" style="margin-top:12px;">
+        <strong>Liquor licence note:</strong> your existing on-consumption licence remains valid even if weddings stop — but inform KZNERA of the change in primary trading activity to avoid any compliance issues.
+      </div>
+      <!-- f-wedding-rev and f-neighbours values managed by setWeddingPosture() on the canonical keep-section fields -->
+    </div>
+
+    <!-- DROP: full pivot -->
+    <div id="wedding-drop-section" style="display:none;">
+      <div class="alert-box alert-warn" style="margin-top:14px;">
+        <strong>Full pivot considerations:</strong>
+        <ul style="margin-top:8px;padding-left:16px;font-size:13px;line-height:1.8;">
+          <li>Honour all existing contracted weddings — cancelling breaches contract and risks legal action</li>
+          <li>Notify KZNERA of the change in primary business activity (affects your liquor licence conditions)</li>
+          <li>Review your zoning consent use — it may have been granted on the basis of a hospitality/events use. A pure residential use may need a fresh application or amendment</li>
+          <li>The venue hall, chapel and décor are now depreciating assets — factor in storage, repurposing, or sale</li>
+          <li>Staff whose primary role was wedding-related may have changed duties — handle any restructuring in compliance with the LRA</li>
+        </ul>
+      </div>
+      <div class="alert-box alert-info" style="margin-top:12px;">
+        <strong>Opportunity:</strong> the venue hall and outdoor spaces become amenities exclusively for residents — a private events space, braai area, social gathering space. This actually enhances the retirement living offering.
+      </div>
+      <!-- f-wedding-rev set to 0 and f-neighbours set to 0 by setWeddingPosture() -->
     </div>
 
     <div class="nav-row">
@@ -836,7 +908,7 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
     <div class="cp-avatar">LF</div>
     <div class="cp-meta">
       <div class="cp-name">Forest Guide</div>
-      <div class="cp-status"><span class="cp-dot"></span> Ask me anything about this business model</div>
+      <div class="cp-status"><span class="cp-dot"></span> Ask me anything &nbsp;·&nbsp; <span onclick="clearChat()" style="cursor:pointer;text-decoration:underline;opacity:0.75;">clear</span></div>
     </div>
     <button class="cp-clear" onclick="toggleChat()" title="Close">✕</button>
   </div>
@@ -912,7 +984,42 @@ function goTo(n) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── CHIP & RADIO HELPERS ──
+// ── WEDDING POSTURE ──
+let weddingPosture = 'keep'; // 'keep' | 'wind' | 'drop'
+
+function setWeddingPosture(posture) {
+  weddingPosture = posture;
+  selectCard(document.querySelector(`#wedding-posture-cards [data-val="${posture}"]`), 'wedding-posture-cards');
+  document.getElementById('wedding-keep-section').style.display = posture === 'keep' ? 'block' : 'none';
+  document.getElementById('wedding-wind-section').style.display = posture === 'wind' ? 'block' : 'none';
+  document.getElementById('wedding-drop-section').style.display = posture === 'drop' ? 'block' : 'none';
+
+  const revField = document.getElementById('f-wedding-rev');
+  const neighboursField = document.getElementById('f-neighbours');
+
+  if (posture === 'drop') {
+    revField.value = 0;
+    revField.setAttribute('readonly', true);
+    revField.style.cssText = 'background:var(--sand);color:var(--muted);cursor:not-allowed;width:100%;font-family:var(--ff-b);font-size:14px;padding:10px 13px;border:1.5px solid var(--border);border-radius:7px;';
+    if (neighboursField) neighboursField.value = 0;
+  } else if (posture === 'wind') {
+    revField.removeAttribute('readonly');
+    revField.style.cssText = '';
+    const windDisplay = document.getElementById('f-wind-rev-display');
+    const windVal = windDisplay ? parseInt(windDisplay.value) || 10000 : 10000;
+    revField.value = windVal;
+    if (neighboursField) neighboursField.value = 0;
+  } else {
+    // keep
+    revField.removeAttribute('readonly');
+    revField.style.cssText = '';
+    if (parseInt(revField.value) < 5000) revField.value = 25000;
+    if (neighboursField) neighboursField.value = neighboursField.value || 3;
+  }
+  updateSummary();
+}
+
+
 function toggleChip(el) { el.classList.toggle('on'); }
 function selectCard(el, groupId) {
   document.querySelectorAll('#' + groupId + ' .radio-card').forEach(c => c.classList.remove('on'));
@@ -972,6 +1079,8 @@ async function generateModel() {
   const careLevel = getSelected('care-cards');
   const accomModel = getSelected('accom-model-cards');
   const communityTone = getSelected('tone-cards');
+  const weddingPostureVal = weddingPosture; // 'keep' | 'wind' | 'drop'
+  const windMonths = document.getElementById('f-wind-months')?.value || '6';
   const weddingRev = parseInt(document.getElementById('f-wedding-rev')?.value) || 0;
   const neighbours = parseInt(document.getElementById('f-neighbours')?.value) || 3;
   const vision = document.getElementById('f-vision').value.trim();
@@ -1033,17 +1142,18 @@ INPUTS:
 - Meal plan: ${mealPlan}
 - Care level: ${careLevel}
 - Extras bundled in rent: ${extras.join(', ') || 'none specified'}
-- Wedding integration: ${accomModel === 'neighbours' ? 'All wedding accommodation via neighbour referrals — resident rooms are permanent' : 'Keep 1–2 rooms for wedding overflow'}
-- Resident wedding perks: ${weddingPerks.join(', ')}
-- Wedding revenue retained: R${weddingRev.toLocaleString()}/month average
-- Overflow accommodation: ${neighbours} neighbouring properties with referral agreements
+- WEDDING VENUE POSTURE: ${weddingPostureVal === 'keep' ? 'KEEPING — both arms run simultaneously' : weddingPostureVal === 'wind' ? `WINDING DOWN — honouring existing bookings, no new ones, full exit in approximately ${windMonths} months` : 'DROPPING COMPLETELY — full pivot to retirement living only, no future weddings accepted'}
+- Wedding integration: ${weddingPostureVal === 'keep' ? (accomModel === 'neighbours' ? 'Wedding guest accommodation via neighbour referrals — resident rooms stay permanently leased' : 'Keep 1–2 rooms for wedding overflow') : 'N/A — exiting weddings'}
+- Resident wedding perks: ${weddingPostureVal === 'keep' ? weddingPerks.join(', ') : 'N/A — no weddings in this model'}
+- Wedding revenue: R${weddingRev.toLocaleString()}/month ${weddingPostureVal === 'drop' ? '(zero — full pivot)' : weddingPostureVal === 'wind' ? '(declining during wind-down period)' : '(ongoing)'}
+- Overflow accommodation: ${weddingPostureVal === 'keep' ? neighbours + ' neighbouring properties with referral agreements' : 'N/A'}
 - Activities: ${activities.join(', ')}
 - Community tone: ${communityTone}
 ${vision ? '- Owner vision: ' + vision : ''}
 
 FINANCIALS (calculated):
 - Monthly rental revenue: R${rentalRevenue.toLocaleString()}
-- Monthly wedding revenue: R${weddingRev.toLocaleString()}
+- Monthly wedding revenue: R${weddingRev.toLocaleString()} ${weddingPostureVal === 'drop' ? '(zero — no weddings)' : ''}
 - Total monthly revenue: R${totalRevenue.toLocaleString()}
 - Monthly staff costs: R${(cook + clean + maint + mgr).toLocaleString()}
 - Monthly food cost: R${foodMonth.toLocaleString()}
@@ -1061,13 +1171,13 @@ Sections to include:
 1. Executive Summary (2–3 paragraphs — warm, confident, specific to this property and concept)
 2. The Concept (what makes this different from a retirement village or care home — the Laughing Forest lifestyle proposition)
 3. Target Resident Profile (who this is for, what they want, why they choose this over alternatives)
-4. Revenue Model (explain the revenue streams with narrative — rental, weddings, extras)
+4. Revenue Model (explain the revenue streams with narrative — rental only if dropping weddings, or both arms if keeping. Be honest about what the numbers depend on.)
 5. Cost Structure (narrative explanation of the main cost categories and how they're managed)
-6. Financial Viability Assessment (interpret the numbers honestly — is this viable? What does it depend on? Include break-even occupancy)
-7. The Wedding Venue Integration (how the two arms complement each other — resident perks, wedding guest accommodation via neighbours, no conflict)
+6. Financial Viability Assessment (interpret the numbers honestly — is this viable? What does it depend on? Include break-even occupancy. If wedding revenue is zero, flag the higher dependency on rental occupancy.)
+7. ${weddingPostureVal === 'keep' ? 'The Wedding Venue Integration (how the two arms complement each other — resident perks, wedding guest accommodation via neighbours, no conflict)' : weddingPostureVal === 'wind' ? 'Winding Down the Wedding Venue (practical steps to honour existing bookings, communicate the change, redeploy staff, update licences and zoning — and how the venue spaces become resident amenities)' : 'Repurposing the Venue Spaces (the hall, chapel, and outdoor areas are now exclusive resident amenities — how this enhances the retirement living offering, including practical ideas for use)'}
 8. Social Programme & Community Life (describe the lifestyle, activities, what a week might look like)
-9. Regulatory & Risk Considerations (what to watch: lease agreements, no medical care boundary, zoning, insurance)
-10. Next Steps (3–5 concrete actions to move forward — realistic, specific to this property)
+9. Regulatory & Risk Considerations (lease agreements, no medical care boundary, zoning, insurance. ${weddingPostureVal !== 'keep' ? 'Include specific notes on liquor licence implications of ceasing wedding operations and any zoning consent use changes needed.' : ''})
+10. Next Steps (3–5 concrete actions to move forward — realistic, specific to this property and the chosen wedding posture)
 
 Tone: Warm, grounded, professional. This is for a small business owner — not a corporate investor. It should feel like it was written by someone who has visited the property and understood the vision. Celebrate what makes this special. Be honest about the numbers.
 
@@ -1108,13 +1218,13 @@ IMPORTANT: Break-even occupancy = the number of units that need to be occupied t
     document.getElementById('gen-status').textContent = '';
 
     // Show a fallback model if API fails
-    const fallbackContent = buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision });
+    const fallbackContent = buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision, weddingPostureVal, windMonths });
     renderOutput({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content: fallbackContent });
     console.warn('API error, using fallback:', e.message);
   }
 }
 
-function buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision }) {
+function buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision, weddingPostureVal = 'keep', windMonths = '6' }) {
   const breakeven = Math.ceil(totalCosts / rent);
   const breakevenPct = Math.round(breakeven / units * 100);
   const viableWord = margin >= 20 ? 'strong' : margin >= 10 ? 'moderate' : margin >= 0 ? 'marginal' : 'challenging';
@@ -1150,9 +1260,30 @@ ${vision ? '<p><em>"' + vision + '"</em></p>' : ''}
 <p>The model produces a <strong>${viableWord}</strong> financial picture at the assumed inputs. A ${margin}% margin ${margin >= 20 ? 'is healthy for a small hospitality business and provides meaningful owner income.' : margin >= 10 ? 'is acceptable but leaves limited buffer — reducing costs or increasing occupancy or rent would strengthen the position.' : margin >= 0 ? 'is tight. Careful cost control and rapid occupancy growth are essential.' : 'means the model loses money at these inputs. Either the rent needs to increase, costs need to reduce, or occupancy assumptions need to be revisited.'}</p>
 <div class="alert-box ${margin >= 15 ? 'alert-good' : margin >= 0 ? 'alert-warn' : 'alert-info'}"><strong>Key sensitivity:</strong> Occupancy is the single biggest driver. Every additional resident above break-even (${breakeven} units) adds R${Math.round(rent - totalCosts / units).toLocaleString()} to monthly profit. Getting to ${Math.round(breakevenPct + 10)}% occupancy quickly is the most important early milestone.</div>
 
-<h2>Wedding Venue Integration</h2>
-<p>The wedding venue continues to operate as before. On wedding days, residents are given friendly advance notice. Participation is entirely voluntary — some residents may love being part of the occasion by helping behind the bar or with flowers; others will simply enjoy the festive atmosphere from their stoep. No resident is obligated to engage, and no resident should ever feel that a wedding has disrupted their home.</p>
-<p>Wedding guest accommodation is handled via referral agreements with ${document.getElementById('f-neighbours').value} neighbouring properties in Elysium — maintaining revenue for the community while keeping resident rooms permanently leased and occupied.</p>
+<h2>${weddingPostureVal === 'keep' ? 'Wedding Venue Integration' : weddingPostureVal === 'wind' ? 'Winding Down the Wedding Venue' : 'Repurposing the Venue Spaces'}</h2>
+${weddingPostureVal === 'keep' ? `
+<p>The wedding venue continues to operate as before. On wedding days, residents are given friendly advance notice. Participation is entirely voluntary — some residents may love being part of the occasion by helping behind the bar or with flowers; others will simply enjoy the festive atmosphere from their stoep. No resident is obligated to engage.</p>
+<p>Wedding guest accommodation is handled via referral agreements with ${document.getElementById('f-neighbours')?.value || 3} neighbouring properties in Elysium — keeping resident rooms permanently leased and occupied while maintaining the community of goodwill with local neighbours.</p>
+` : weddingPostureVal === 'wind' ? `
+<p>The decision to wind down the wedding side of the business over approximately ${windMonths} months is a measured and low-risk approach. All existing contracted weddings are honoured in full — this is both a legal obligation and a reputational one. No new bookings are accepted from the date the decision is made.</p>
+<ul>
+  <li>Notify any engaged couples on the waiting list as early as possible — give them time to find alternatives</li>
+  <li>Use the wind-down period to reach retirement living occupancy, so revenue remains stable during the transition</li>
+  <li>Inform KZNERA of the change in primary trading activity to keep the liquor licence clean</li>
+  <li>Redeploy wedding-specific staff to resident services roles where possible — this avoids retrenchment costs</li>
+  <li>The venue hall, chapel and outdoor spaces transition into exclusive resident amenities — a genuine enhancement to the retirement offering</li>
+</ul>
+` : `
+<p>The full pivot to retirement living means the wedding venue hall, chapel, outdoor terrace and garden areas are now exclusively for residents. This is a meaningful upgrade — a private events space that most retirement communities could only dream of.</p>
+<ul>
+  <li>The hall becomes a communal lounge, movie night space, card game room, or dining room for special resident occasions</li>
+  <li>The chapel terrace — with its Indian Ocean view — is a resident amenity: morning coffee, sundowners, reading</li>
+  <li>The outdoor areas are braai and social spaces, exclusively for residents and their guests</li>
+  <li>Notify KZNERA that the primary business activity has changed — liquor licence conditions may need updating</li>
+  <li>Review your zoning consent use — if it was granted on the basis of hospitality/events, a residential-only use may need an amended consent or new application</li>
+  <li>Handle any staff restructuring under the LRA — fair process, proper notice, severance where applicable</li>
+</ul>
+`}
 
 <h2>Social Programme & Community Life</h2>
 <p>The rhythm of life here is gentle and varied. ${activities.length > 0 ? 'Planned activities include: ' + activities.join(', ') + '.' : ''} The beach is minutes away on foot. Town and the clinic are reachable by the property vehicle on scheduled days. Braais happen when someone feels like it. Golf is on Tuesdays if there's interest.</p>
