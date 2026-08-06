@@ -479,9 +479,9 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
 
   <!-- ── LIVE SUMMARY STRIP ── -->
   <div class="summary-strip" id="summary-strip" style="display:none;">
-    <div class="strip-item"><div class="strip-val" id="s-units">—</div><div class="strip-label">Units</div></div>
+    <div class="strip-item"><div class="strip-val" id="s-units">—</div><div class="strip-label">Total units</div></div>
     <div class="strip-item"><div class="strip-val" id="s-occ">—</div><div class="strip-label">Occupancy</div></div>
-    <div class="strip-item"><div class="strip-val" id="s-rent">—</div><div class="strip-label">Monthly rent</div></div>
+    <div class="strip-item"><div class="strip-val" id="s-rent">—</div><div class="strip-label">Blended rent</div></div>
     <div class="strip-item"><div class="strip-val" id="s-revenue">—</div><div class="strip-label">Monthly revenue</div></div>
     <div class="strip-item"><div class="strip-val" id="s-margin">—</div><div class="strip-label">Est. margin</div></div>
   </div>
@@ -489,33 +489,105 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
   <!-- ══════════════════ STEP 1 — CAPACITY ══════════════════ -->
   <div class="step-card active" id="step-1">
     <div class="step-heading">Capacity & accommodation</div>
-    <div class="step-desc">Start with what's available. The current property has 7 double rooms and 4 family cabins — you can convert some, all, or plan new units.</div>
+    <div class="step-desc">Phil has confirmed three unit types. Adjust the counts if needed — prices are pre-filled from the owner's figures but you can change them.</div>
 
-    <div class="section-label">Unit configuration</div>
-    <div class="field-row">
-      <div class="field-group">
-        <label>Number of resident units</label>
-        <input type="number" id="f-units" value="10" min="1" max="40" oninput="updateSummary()"/>
-        <div class="hint">Rooms converted to long-term rental</div>
+    <div class="section-label">Unit types & pricing</div>
+
+    <!-- Unit type cards -->
+    <div style="display:grid;gap:12px;margin-bottom:20px;">
+
+      <!-- Type A: Single cabins -->
+      <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px 18px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:180px;">
+            <div style="font-family:var(--ff-d);font-size:15px;color:var(--forest);margin-bottom:2px;">Single cabin room</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.5;">Single room with communal kitchen &amp; shared deck. Self-catering. No en-suite.</div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+            <div class="field-group" style="margin:0;min-width:80px;">
+              <label style="font-size:11px;">Units</label>
+              <input type="number" id="u-a-count" value="6" min="0" max="20" style="width:70px;text-align:center;" oninput="updateSummary()"/>
+            </div>
+            <div class="field-group" style="margin:0;min-width:110px;">
+              <label style="font-size:11px;">Rent / month (R)</label>
+              <input type="number" id="u-a-rent" value="6500" min="1000" max="20000" step="500" style="width:100px;" oninput="updateSummary()"/>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--sand);display:flex;justify-content:space-between;font-size:12px;color:var(--muted);">
+          <span>At 100%: <strong id="u-a-full" style="color:var(--forest);">R39,000</strong>/month</span>
+          <span>At 70%: <strong id="u-a-70" style="color:var(--bark);">R27,300</strong>/month</span>
+        </div>
       </div>
-      <div class="field-group">
-        <label>Average unit size</label>
-        <select id="f-unitsize">
-          <option value="studio">Studio / single room</option>
-          <option value="double" selected>Double / en-suite</option>
-          <option value="cabin">Self-catering cabin</option>
-          <option value="mix">Mixed (rooms + cabins)</option>
-        </select>
+
+      <!-- Type B: En-suite cabins -->
+      <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px 18px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:180px;">
+            <div style="font-family:var(--ff-d);font-size:15px;color:var(--forest);margin-bottom:2px;">En-suite cabin</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.5;">Bedroom, private bathroom, lounge &amp; outside deck / patio. Self-contained.</div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+            <div class="field-group" style="margin:0;min-width:80px;">
+              <label style="font-size:11px;">Units</label>
+              <input type="number" id="u-b-count" value="7" min="0" max="20" style="width:70px;text-align:center;" oninput="updateSummary()"/>
+            </div>
+            <div class="field-group" style="margin:0;min-width:110px;">
+              <label style="font-size:11px;">Rent / month (R)</label>
+              <input type="number" id="u-b-rent" value="10000" min="1000" max="30000" step="500" style="width:100px;" oninput="updateSummary()"/>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--sand);display:flex;justify-content:space-between;font-size:12px;color:var(--muted);">
+          <span>At 100%: <strong id="u-b-full" style="color:var(--forest);">R70,000</strong>/month</span>
+          <span>At 70%: <strong id="u-b-70" style="color:var(--bark);">R49,000</strong>/month</span>
+        </div>
+      </div>
+
+      <!-- Type C: House -->
+      <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px 18px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:180px;">
+            <div style="font-family:var(--ff-d);font-size:15px;color:var(--forest);margin-bottom:2px;">3-bedroom house</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.5;">Full house — suitable for a couple or resident who wants more space. Premium unit.</div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+            <div class="field-group" style="margin:0;min-width:80px;">
+              <label style="font-size:11px;">Units</label>
+              <input type="number" id="u-c-count" value="1" min="0" max="5" style="width:70px;text-align:center;" oninput="updateSummary()"/>
+            </div>
+            <div class="field-group" style="margin:0;min-width:110px;">
+              <label style="font-size:11px;">Rent / month (R)</label>
+              <input type="number" id="u-c-rent" value="15000" min="1000" max="40000" step="500" style="width:100px;" oninput="updateSummary()"/>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--sand);display:flex;justify-content:space-between;font-size:12px;color:var(--muted);">
+          <span>At 100%: <strong id="u-c-full" style="color:var(--forest);">R15,000</strong>/month</span>
+          <span>At 70%: <strong id="u-c-70" style="color:var(--bark);">—</strong>/month</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Revenue summary at a glance -->
+    <div style="background:var(--forest);border-radius:var(--r);padding:14px 18px;margin-bottom:20px;">
+      <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold-lt);margin-bottom:10px;">Revenue at a glance</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;">
+        <div><div style="font-family:var(--ff-d);font-size:18px;color:var(--white);" id="rv-total-units">14</div><div style="font-size:11px;color:rgba(255,255,255,0.55);">Total units</div></div>
+        <div><div style="font-family:var(--ff-d);font-size:18px;color:var(--gold-lt);" id="rv-100">R124,000</div><div style="font-size:11px;color:rgba(255,255,255,0.55);">100% occupancy</div></div>
+        <div><div style="font-family:var(--ff-d);font-size:18px;color:var(--gold-lt);" id="rv-70">R86,800</div><div style="font-size:11px;color:rgba(255,255,255,0.55);">70% occupancy</div></div>
+        <div><div style="font-family:var(--ff-d);font-size:18px;color:var(--gold-lt);" id="rv-blended">R8,857</div><div style="font-size:11px;color:rgba(255,255,255,0.55);">Blended rent</div></div>
       </div>
     </div>
 
     <div class="field-group">
-      <label>Target occupancy</label>
+      <label>Target occupancy for financial model</label>
       <div style="display:flex;align-items:center;gap:14px;margin-top:6px;">
         <input type="range" id="f-occ" min="50" max="100" value="80" step="5" oninput="document.getElementById('occ-val').textContent=this.value+'%';updateSummary()"/>
         <span id="occ-val" style="font-weight:600;color:var(--forest);min-width:36px;">80%</span>
       </div>
-      <div class="hint">At 80% = 8 of 10 units occupied. Aim for 85–90% once established.</div>
+      <div class="hint">Phil's break-even estimate is 70%. The model will show financials at your chosen occupancy level.</div>
     </div>
 
     <div class="field-group">
@@ -547,64 +619,88 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
 
     <div class="nav-row">
       <div></div>
-      <button class="btn btn-primary" onclick="goTo(2)">Next — Pricing ›</button>
+      <button class="btn btn-primary" onclick="goTo(2)">Next — Inclusions ›</button>
     </div>
   </div>
 
-  <!-- ══════════════════ STEP 2 — PRICING ══════════════════ -->
+  <!-- ══════════════════ STEP 2 — INCLUSIONS ══════════════════ -->
   <div class="step-card" id="step-2">
-    <div class="step-heading">Rental pricing</div>
-    <div class="step-desc">Set your monthly all-in rental. The South Coast KZN market for this type of lifestyle offering sits roughly R8,000–R18,000/month depending on inclusions.</div>
+    <div class="step-heading">What's included in the rent?</div>
+    <div class="step-desc">Phil's model has owner paying water, lights, rates and insurance. Define what else is bundled in — this shapes the value proposition and affects your cost base.</div>
 
-    <div class="field-row">
-      <div class="field-group">
-        <label>Monthly rental — all-in (R)</label>
-        <input type="number" id="f-rent" value="12000" min="5000" max="30000" step="500" oninput="updateSummary()"/>
-        <div class="hint">Fixed monthly amount per resident — no seasonal variation</div>
-      </div>
-      <div class="field-group">
-        <label>Deposit (months)</label>
-        <select id="f-deposit">
-          <option value="1">1 month (standard)</option>
-          <option value="2" selected>2 months (furnished / long-term)</option>
-        </select>
-        <div class="hint">RHA has no statutory cap but market norm is 1–2 months. Must be held in an interest-bearing account — interest accrues to resident.</div>
-      </div>
+    <div class="section-label">Owner-paid overheads (Phil's model)</div>
+    <div class="alert-box alert-good" style="margin-bottom:16px;">
+      <strong>Confirmed by owner:</strong> Water, electricity, municipal rates and insurance are all included in the rental. Residents pay no separate utility accounts.
+    </div>
+    <div class="chip-group" id="owner-paid-chips">
+      <div class="chip on" style="cursor:default;opacity:0.8;">Water &amp; electricity</div>
+      <div class="chip on" style="cursor:default;opacity:0.8;">Municipal rates</div>
+      <div class="chip on" style="cursor:default;opacity:0.8;">Insurance (building)</div>
     </div>
 
-    <div class="field-group">
-      <label>Meal plan included in rent</label>
-      <div class="radio-cards" id="meal-plan-cards">
-        <div class="radio-card" onclick="selectCard(this,'meal-plan-cards')" data-val="none">
-          <div class="radio-card-title">No meals</div>
-          <div class="radio-card-desc">Residents fully self-catering. Kitchen access provided.</div>
-        </div>
-        <div class="radio-card on" onclick="selectCard(this,'meal-plan-cards')" data-val="1meal">
-          <div class="radio-card-title">1 meal per day</div>
-          <div class="radio-card-desc">Typically dinner — hot communal meal, builds community.</div>
-        </div>
-        <div class="radio-card" onclick="selectCard(this,'meal-plan-cards')" data-val="2meal">
-          <div class="radio-card-title">2 meals per day</div>
-          <div class="radio-card-desc">Breakfast + dinner. Higher food cost but strong value for residents.</div>
-        </div>
-        <div class="radio-card" onclick="selectCard(this,'meal-plan-cards')" data-val="flex">
-          <div class="radio-card-title">Flexible add-on</div>
-          <div class="radio-card-desc">Meals available at extra cost per meal — residents opt in.</div>
-        </div>
+    <div class="field-group" style="margin-top:20px;">
+      <label>Deposit (months)</label>
+      <select id="f-deposit">
+        <option value="1">1 month (standard)</option>
+        <option value="2" selected>2 months (recommended for long-term)</option>
+      </select>
+      <div class="hint">Must be held in a separate interest-bearing account. Interest accrues to the resident.</div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="section-label">Meal plan</div>
+    <div class="radio-cards" id="meal-plan-cards">
+      <div class="radio-card on" onclick="selectCard(this,'meal-plan-cards')" data-val="none">
+        <div class="radio-card-title">No meals — fully self-catering</div>
+        <div class="radio-card-desc">Single cabin residents share communal kitchen. En-suite cabins and house have own facilities. No food cost to owner.</div>
+      </div>
+      <div class="radio-card" onclick="selectCard(this,'meal-plan-cards')" data-val="1meal">
+        <div class="radio-card-title">1 communal meal / day</div>
+        <div class="radio-card-desc">Typically dinner — builds community and justifies the premium. Adds food cost but differentiates from a standard rental.</div>
+      </div>
+      <div class="radio-card" onclick="selectCard(this,'meal-plan-cards')" data-val="2meal">
+        <div class="radio-card-title">2 meals / day</div>
+        <div class="radio-card-desc">Breakfast + dinner. Higher food cost but strongest value proposition for residents.</div>
       </div>
     </div>
 
     <hr class="divider"/>
-    <div class="section-label">Optional extras (add-on revenue)</div>
+    <div class="section-label">Additional bundled services</div>
     <div class="chip-group" id="extras-chips">
-      <div class="chip on" onclick="toggleChip(this)" data-val="transport">Transport levy (clinic/town)</div>
-      <div class="chip on" onclick="toggleChip(this)" data-val="laundry">Weekly laundry</div>
+      <div class="chip on" onclick="toggleChip(this)" data-val="transport">Transport levy (clinic/town runs)</div>
+      <div class="chip on" onclick="toggleChip(this)" data-val="laundry">Laundry service (on-site cleaner)</div>
       <div class="chip" onclick="toggleChip(this)" data-val="wifi">Wi-Fi & DSTV</div>
-      <div class="chip on" onclick="toggleChip(this)" data-val="social">Social programme</div>
-      <div class="chip" onclick="toggleChip(this)" data-val="housekeeping">Weekly housekeeping</div>
-      <div class="chip" onclick="toggleChip(this)" data-val="golf">Golf membership subsidy</div>
+      <div class="chip on" onclick="toggleChip(this)" data-val="social">Social programme (bowling, golf, outings)</div>
+      <div class="chip" onclick="toggleChip(this)" data-val="housekeeping">Weekly in-room housekeeping</div>
     </div>
-    <div class="hint" style="margin-top:8px;">Selected extras are bundled into the monthly rental in the model. Unselected items residents source themselves.</div>
+    <div class="hint" style="margin-top:8px;">On-site cleaner handles communal areas &amp; refuse removal as a baseline. In-room housekeeping is optional above that.</div>
+
+    <!-- Per-extra cost fields — shown/hidden by toggleChip() based on which chips above are "on" -->
+    <div id="extras-cost-fields" style="margin-top:14px;">
+      <div class="extra-cost-row" data-chip="transport" style="display:none;background:var(--forest-pale);border-radius:8px;padding:10px 14px;margin-bottom:8px;">
+        <div class="hint" style="margin:0;">Cost for this is the <strong>Transport operating cost</strong> field in Step 3 — Costs.</div>
+      </div>
+      <div class="extra-cost-row" data-chip="laundry" style="display:none;background:var(--forest-pale);border-radius:8px;padding:10px 14px;margin-bottom:8px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--forest);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:6px;">Laundry service cost (R/month)</label>
+        <input type="number" id="c-extra-laundry" value="1800" step="100" min="0" style="max-width:160px;" oninput="updateSummary()"/>
+        <div class="hint" style="margin-top:4px;">Flat cost — detergent, equipment, extra staff time above the on-site cleaner's basic wage.</div>
+      </div>
+      <div class="extra-cost-row" data-chip="wifi" style="display:none;background:var(--forest-pale);border-radius:8px;padding:10px 14px;margin-bottom:8px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--forest);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:6px;">Wi-Fi &amp; DSTV cost (R/month)</label>
+        <input type="number" id="c-extra-wifi" value="2000" step="100" min="0" style="max-width:160px;" oninput="updateSummary()"/>
+        <div class="hint" style="margin-top:4px;">Flat property-wide cost — Wi-Fi ~R800/month + DSTV ~R1,200/month.</div>
+      </div>
+      <div class="extra-cost-row" data-chip="social" style="display:none;background:var(--forest-pale);border-radius:8px;padding:10px 14px;margin-bottom:8px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--forest);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:6px;">Social programme subsidy (R/resident/month)</label>
+        <input type="number" id="c-extra-social" value="300" step="50" min="0" style="max-width:160px;" oninput="updateSummary()"/>
+        <div class="hint" style="margin-top:4px;">Bowling, golf, outings — per occupied unit, scales with occupancy.</div>
+      </div>
+      <div class="extra-cost-row" data-chip="housekeeping" style="display:none;background:var(--forest-pale);border-radius:8px;padding:10px 14px;margin-bottom:8px;">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--forest);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:6px;">Weekly in-room housekeeping (R/resident/month)</label>
+        <input type="number" id="c-extra-housekeeping" value="400" step="50" min="0" style="max-width:160px;" oninput="updateSummary()"/>
+        <div class="hint" style="margin-top:4px;">Above the baseline cleaner — per occupied unit, scales with occupancy.</div>
+      </div>
+    </div>
 
     <div class="nav-row">
       <button class="btn btn-outline" onclick="goTo(1)">‹ Back</button>
@@ -615,79 +711,128 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
   <!-- ══════════════════ STEP 3 — COSTS ══════════════════ -->
   <div class="step-card" id="step-3">
     <div class="step-heading">Operating costs</div>
-    <div class="step-desc">Estimate your monthly outgoings. The model will calculate viability based on these figures.</div>
+    <div class="step-desc">Pre-filled from Phil's staffing model. Adjust to match current or planned wage agreements.</div>
 
-    <div class="section-label">Staffing</div>
+    <div class="section-label">Staffing — Phil's model</div>
+
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:18px;">
+      <!-- On-site cleaner -->
+      <div style="padding:14px 16px;border-bottom:1px solid var(--sand);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;color:var(--forest);">On-site cleaner (live-in / on call)</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;">On-site presence. Communal area cleaning &amp; refuse removal at basic wage. Residents can hire her directly at a negotiated rate for in-room cleaning &amp; laundry — that income is hers, not yours.</div>
+          </div>
+          <div class="field-group" style="margin:0;min-width:130px;">
+            <label style="font-size:11px;">Basic wage (R/month)</label>
+            <input type="number" id="c-clean" value="6500" step="500" min="0" style="width:120px;"/>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px;">NMW min ~R5,895</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5-day maintenance -->
+      <div style="padding:14px 16px;border-bottom:1px solid var(--sand);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;color:var(--forest);">Maintenance / grounds (5 days/week)</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;">Property cleanliness, tidiness and light maintenance. 5-day presence, Mon–Fri.</div>
+          </div>
+          <div class="field-group" style="margin:0;min-width:130px;">
+            <label style="font-size:11px;">Wage (R/month)</label>
+            <input type="number" id="c-maint" value="7000" step="500" min="0" style="width:120px;"/>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px;">NMW min ~R5,895</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Garden contractor -->
+      <div style="padding:14px 16px;border-bottom:1px solid var(--sand);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;color:var(--forest);">Garden contractor (Bizzy Bees / weekly)</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;">External contractor, once per week. Gardens and outdoor common areas.</div>
+          </div>
+          <div class="field-group" style="margin:0;min-width:130px;">
+            <label style="font-size:11px;">Cost (R/month)</label>
+            <input type="number" id="c-garden" value="2500" step="250" min="0" style="width:120px;"/>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px;">~4 visits/month</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cook — optional -->
+      <div style="padding:14px 16px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;color:var(--forest);">Cook / kitchen <span style="font-size:11px;font-weight:400;color:var(--muted);">(only if meal plan selected)</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;">Set to zero if fully self-catering. Increases if 1–2 meals/day are provided.</div>
+          </div>
+          <div class="field-group" style="margin:0;min-width:130px;">
+            <label style="font-size:11px;">Wage (R/month)</label>
+            <input type="number" id="c-cook" value="0" step="500" min="0" style="width:120px;"/>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px;">Skilled cook R8,500–R13,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Manager / coordinator (R/month)</label>
+      <input type="number" id="c-mgr" value="0" step="500" min="0"/>
+      <div class="hint">Set to zero if Debbie manages this herself without a separate salary draw. Add a figure if a dedicated coordinator is employed or if Debbie draws a management fee.</div>
+    </div>
+
+    <hr class="divider"/>
+    <div class="section-label">Fixed overheads (owner-paid)</div>
+
     <div class="field-row">
       <div class="field-group">
-        <label>Cook / kitchen (R/month)</label>
-        <input type="number" id="c-cook" value="9000" step="500" min="0"/>
-        <div class="hint">Current staff — may already be employed. NMW 2026: R30.23/hr = ~R5,895/month minimum (45hr week). Skilled cook realistically R8,500–R13,000.</div>
+        <label>Water &amp; electricity (R/month)</label>
+        <input type="number" id="c-util" value="9000" step="500" min="0"/>
+        <div class="hint">14 units — budget R600–R800/unit. Pre-paid meters per unit reduce this significantly.</div>
       </div>
       <div class="field-group">
-        <label>Housekeeper / cleaner (R/month)</label>
-        <input type="number" id="c-clean" value="7000" step="500" min="0"/>
-        <div class="hint">NMW 2026 minimum ~R5,895/month for 45hr week. Budget R6,500–R8,500 for reliable staff.</div>
+        <label>Municipal rates (R/month)</label>
+        <input type="number" id="c-rates" value="3500" step="500" min="0"/>
+        <div class="hint">Ugu District Municipality — confirm current assessed value tariff</div>
       </div>
     </div>
     <div class="field-row">
       <div class="field-group">
-        <label>Maintenance / grounds (R/month)</label>
-        <input type="number" id="c-maint" value="4000" step="500" min="0"/>
-      </div>
-      <div class="field-group">
-        <label>Manager / coordinator (R/month)</label>
-        <input type="number" id="c-mgr" value="12000" step="500" min="0"/>
-        <div class="hint">Could be Debbie initially</div>
-      </div>
-    </div>
-
-    <div class="section-label">Food & consumables</div>
-    <div class="field-row">
-      <div class="field-group">
-        <label>Food cost per resident per day (R)</label>
-        <input type="number" id="c-food" value="120" step="5" min="0"/>
-        <div class="hint">Budget R110–R160/day for 2 meals (2026 KZN food costs). R120 is a realistic mid-point for decent home-style cooking.</div>
-      </div>
-      <div class="field-group">
-        <label>Consumables & household (R/month)</label>
-        <input type="number" id="c-consumables" value="3000" step="500" min="0"/>
-      </div>
-    </div>
-
-    <div class="section-label">Fixed overheads</div>
-    <div class="field-row">
-      <div class="field-group">
-        <label>Utilities — electricity, water (R/month)</label>
-        <input type="number" id="c-util" value="8000" step="500" min="0"/>
-      </div>
-      <div class="field-group">
-        <label>Insurance (R/month)</label>
+        <label>Insurance — building &amp; liability (R/month)</label>
         <input type="number" id="c-insure" value="3500" step="500" min="0"/>
+        <div class="hint">Must be updated to cover permanent residents before move-in</div>
       </div>
-    </div>
-    <div class="field-row">
       <div class="field-group">
         <label>Transport operating cost (R/month)</label>
-        <input type="number" id="c-transport" value="4000" step="500" min="0"/>
-        <div class="hint">Fuel + vehicle maintenance</div>
+        <input type="number" id="c-transport" value="3500" step="500" min="0"/>
+        <div class="hint">Fuel + vehicle maintenance for clinic/town runs</div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Food cost (R/month) <span style="font-weight:400;font-size:11px;color:var(--muted);">— if meal plan selected</span></label>
+        <input type="number" id="c-food-total" value="0" step="500" min="0"/>
+        <div class="hint">Leave at zero for self-catering. For 1 meal/day at 14 residents: ~R50,400/month (R120/meal/person). Adjust to your plan.</div>
       </div>
       <div class="field-group">
-        <label>Marketing & admin (R/month)</label>
-        <input type="number" id="c-marketing" value="2500" step="500" min="0"/>
+        <label>Marketing &amp; admin (R/month)</label>
+        <input type="number" id="c-marketing" value="2000" step="500" min="0"/>
       </div>
     </div>
     <div class="field-group">
       <label>Contingency / repairs buffer (%)</label>
       <div style="display:flex;align-items:center;gap:14px;margin-top:6px;">
-        <input type="range" id="c-contingency" min="2" max="20" value="10" step="1" oninput="document.getElementById('cont-val').textContent=this.value+'%'"/>
+        <input type="range" id="c-contingency" min="5" max="20" value="10" step="1" oninput="document.getElementById('cont-val').textContent=this.value+'%'"/>
         <span id="cont-val" style="font-weight:600;color:var(--forest);">10%</span>
       </div>
+      <div class="hint">Older coastal property — 10–15% is prudent. Covers unplanned repairs, voids, and cost increases.</div>
     </div>
 
     <div class="nav-row">
       <button class="btn btn-outline" onclick="goTo(2)">‹ Back</button>
-      <button class="btn btn-primary" onclick="goTo(4)">Next — Integration ›</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Next — Wedding venue ›</button>
     </div>
   </div>
 
@@ -698,7 +843,7 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
 
     <div class="section-label">Wedding venue posture</div>
     <div class="radio-cards" style="grid-template-columns:1fr 1fr 1fr;" id="wedding-posture-cards">
-      <div class="radio-card on" onclick="setWeddingPosture('keep')" data-val="keep">
+      <div class="radio-card" onclick="setWeddingPosture('keep')" data-val="keep">
         <div class="radio-card-title">✓ Keep it running</div>
         <div class="radio-card-desc">Weddings continue alongside retirement living. Two complementary income streams.</div>
       </div>
@@ -706,14 +851,14 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
         <div class="radio-card-title">↓ Wind it down</div>
         <div class="radio-card-desc">Phase out weddings over time as retirement living grows. Honour existing bookings.</div>
       </div>
-      <div class="radio-card" onclick="setWeddingPosture('drop')" data-val="drop">
+      <div class="radio-card on" onclick="setWeddingPosture('drop')" data-val="drop">
         <div class="radio-card-title">✕ Drop it completely</div>
         <div class="radio-card-desc">Full pivot. Retirement living only — no future wedding bookings accepted.</div>
       </div>
     </div>
 
     <!-- KEEP: shown when wedding venue continues -->
-    <div id="wedding-keep-section">
+    <div id="wedding-keep-section" style="display:none;">
       <div class="alert-box alert-good" style="margin-top:14px;">
         Running both arms is the strongest financial position — wedding revenue offsets fixed costs and gives you a buffer while the retirement living side reaches full occupancy.
       </div>
@@ -746,7 +891,7 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
 
       <div class="field-group" style="margin-top:18px;">
         <label>Estimated wedding revenue (R/month avg)</label>
-        <input type="number" id="f-wedding-rev" value="25000" step="1000" min="0" oninput="updateSummary()"/>
+        <input type="number" id="f-wedding-rev" value="0" step="1000" min="0" oninput="updateSummary()" readonly style="background:var(--sand);color:var(--muted);cursor:not-allowed;width:100%;font-family:var(--ff-b);font-size:14px;padding:10px 13px;border:1.5px solid var(--border);border-radius:7px;"/>
         <div class="hint">Average monthly contribution from weddings — ceremonies, packages, catering. Typically 2–4 events/month on the South Coast.</div>
       </div>
 
@@ -788,7 +933,7 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
     </div>
 
     <!-- DROP: full pivot -->
-    <div id="wedding-drop-section" style="display:none;">
+    <div id="wedding-drop-section">
       <div class="alert-box alert-warn" style="margin-top:14px;">
         <strong>Full pivot considerations:</strong>
         <ul style="margin-top:8px;padding-left:16px;font-size:13px;line-height:1.8;">
@@ -927,9 +1072,9 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
     <button class="cp-chip" onclick="chipSend('What occupancy do I need to break even?')">Break-even?</button>
     <button class="cp-chip" onclick="chipSend('What zoning changes are needed?')">Zoning?</button>
     <button class="cp-chip" onclick="chipSend('What should the lease agreement include?')">Lease must-haves?</button>
-    <button class="cp-chip" onclick="chipSend('How does the wedding venue fit with residents?')">Weddings + residents?</button>
+    <button class="cp-chip" onclick="chipSend('What happens to the venue spaces once weddings stop?')">Repurposing spaces?</button>
     <button class="cp-chip" onclick="chipSend('What insurance do I need?')">Insurance?</button>
-    <button class="cp-chip" onclick="chipSend('Can residents be involved in weddings?')">Resident involvement?</button>
+    <button class="cp-chip" onclick="chipSend('What do I need to tell KZNERA when I stop doing weddings?')">Liquor licence exit?</button>
   </div>
 
   <!-- Messages -->
@@ -985,7 +1130,7 @@ function goTo(n) {
 }
 
 // ── WEDDING POSTURE ──
-let weddingPosture = 'keep'; // 'keep' | 'wind' | 'drop'
+let weddingPosture = 'drop'; // 'keep' | 'wind' | 'drop'
 
 function setWeddingPosture(posture) {
   weddingPosture = posture;
@@ -1020,7 +1165,60 @@ function setWeddingPosture(posture) {
 }
 
 
-function toggleChip(el) { el.classList.toggle('on'); }
+function toggleChip(el) {
+  el.classList.toggle('on');
+  if (el.closest('#extras-chips')) {
+    syncExtraCostFields();
+    updateSummary();
+  }
+}
+
+// ── EXTRAS COST FIELDS — show/hide the per-chip rand field based on chip state ──
+function syncExtraCostFields() {
+  document.querySelectorAll('#extras-cost-fields .extra-cost-row').forEach(row => {
+    const chipVal = row.dataset.chip;
+    const chip = document.querySelector('#extras-chips .chip[data-val="' + chipVal + '"]');
+    row.style.display = (chip && chip.classList.contains('on')) ? 'block' : 'none';
+  });
+}
+
+// ── EXTRAS COST — sum the rand value behind each toggled-on chip ──
+// Flat items (wifi, laundry) are a fixed monthly cost.
+// Per-resident items (social, housekeeping) scale with occupied units.
+// Transport is excluded here — it's costed via the dedicated c-transport field in Step 3.
+function getExtrasCost(occupiedUnits) {
+  const isOn = (val) => !!document.querySelector('#extras-chips .chip[data-val="' + val + '"].on');
+  let total = 0;
+  const items = [];
+
+  if (isOn('wifi')) {
+    const v = parseInt(document.getElementById('c-extra-wifi')?.value) || 0;
+    total += v;
+    items.push({ label: 'Wi-Fi & DSTV', amount: v, basis: 'flat' });
+  }
+  if (isOn('laundry')) {
+    const v = parseInt(document.getElementById('c-extra-laundry')?.value) || 0;
+    total += v;
+    items.push({ label: 'Laundry service', amount: v, basis: 'flat' });
+  }
+  if (isOn('social')) {
+    const perResident = parseInt(document.getElementById('c-extra-social')?.value) || 0;
+    const v = perResident * occupiedUnits;
+    total += v;
+    items.push({ label: 'Social programme (bowling, golf, outings)', amount: v, basis: 'R' + perResident.toLocaleString() + '/resident × ' + occupiedUnits + ' occupied' });
+  }
+  if (isOn('housekeeping')) {
+    const perResident = parseInt(document.getElementById('c-extra-housekeeping')?.value) || 0;
+    const v = perResident * occupiedUnits;
+    total += v;
+    items.push({ label: 'Weekly in-room housekeeping', amount: v, basis: 'R' + perResident.toLocaleString() + '/resident × ' + occupiedUnits + ' occupied' });
+  }
+  if (isOn('transport')) {
+    items.push({ label: 'Transport levy (clinic/town runs)', amount: null, basis: 'costed via Transport operating cost field, Step 3' });
+  }
+
+  return { total, items };
+}
 function selectCard(el, groupId) {
   document.querySelectorAll('#' + groupId + ' .radio-card').forEach(c => c.classList.remove('on'));
   el.classList.add('on');
@@ -1033,84 +1231,123 @@ function getChips(groupId) {
   return Array.from(document.querySelectorAll('#' + groupId + ' .chip.on')).map(c => c.textContent.trim());
 }
 
+// ── UNIT HELPERS ──
+function getUnitData() {
+  const aCount = parseInt(document.getElementById('u-a-count')?.value) || 0;
+  const aRent  = parseInt(document.getElementById('u-a-rent')?.value)  || 6500;
+  const bCount = parseInt(document.getElementById('u-b-count')?.value) || 0;
+  const bRent  = parseInt(document.getElementById('u-b-rent')?.value)  || 10000;
+  const cCount = parseInt(document.getElementById('u-c-count')?.value) || 0;
+  const cRent  = parseInt(document.getElementById('u-c-rent')?.value)  || 15000;
+  const totalUnits = aCount + bCount + cCount;
+  const rev100 = (aCount * aRent) + (bCount * bRent) + (cCount * cRent);
+  const blended = totalUnits > 0 ? Math.round(rev100 / totalUnits) : 0;
+  return { aCount, aRent, bCount, bRent, cCount, cRent, totalUnits, rev100, blended };
+}
+
 // ── LIVE SUMMARY ──
 function updateSummary() {
-  const units = parseInt(document.getElementById('f-units').value) || 10;
+  const ud  = getUnitData();
   const occ = parseInt(document.getElementById('f-occ')?.value) || 80;
-  const rent = parseInt(document.getElementById('f-rent')?.value) || 12000;
   const weddingRev = parseInt(document.getElementById('f-wedding-rev')?.value) || 0;
-  const occupied = Math.round(units * occ / 100);
-  const monthlyRevenue = occupied * rent + weddingRev;
-  const estimatedCosts = calcTotalCosts(occupied);
-  const margin = monthlyRevenue > 0 ? Math.round((monthlyRevenue - estimatedCosts) / monthlyRevenue * 100) : 0;
 
-  document.getElementById('s-units').textContent = units;
-  document.getElementById('s-occ').textContent = occ + '%';
-  document.getElementById('s-rent').textContent = 'R' + rent.toLocaleString();
-  document.getElementById('s-revenue').textContent = 'R' + monthlyRevenue.toLocaleString();
-  document.getElementById('s-margin').textContent = margin + '%';
+  const rentalRev = Math.round(ud.rev100 * occ / 100);
+  const totalRev  = rentalRev + weddingRev;
+  const costs     = calcTotalCosts(Math.round(ud.totalUnits * occ / 100));
+  const margin    = totalRev > 0 ? Math.round((totalRev - costs) / totalRev * 100) : 0;
+
+  // Summary strip
+  document.getElementById('s-units').textContent   = ud.totalUnits;
+  document.getElementById('s-occ').textContent     = occ + '%';
+  document.getElementById('s-rent').textContent    = 'R' + ud.blended.toLocaleString();
+  document.getElementById('s-revenue').textContent = 'R' + totalRev.toLocaleString();
+  document.getElementById('s-margin').textContent  = margin + '%';
+
+  // Step 1 unit-level previews
+  const a70 = Math.floor(ud.aCount * 0.7);
+  const b70 = Math.floor(ud.bCount * 0.7);
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('u-a-full', 'R' + (ud.aCount * ud.aRent).toLocaleString());
+  set('u-a-70',   a70 > 0 ? 'R' + (a70 * ud.aRent).toLocaleString() : '—');
+  set('u-b-full', 'R' + (ud.bCount * ud.bRent).toLocaleString());
+  set('u-b-70',   b70 > 0 ? 'R' + (b70 * ud.bRent).toLocaleString() : '—');
+  set('u-c-full', 'R' + (ud.cCount * ud.cRent).toLocaleString());
+  set('u-c-70',   ud.cCount > 0 ? 'R' + ud.cRent.toLocaleString() : '—');
+
+  // Revenue at a glance panel
+  const rev70 = Math.round(ud.rev100 * 0.7);
+  set('rv-total-units', ud.totalUnits);
+  set('rv-100',     'R' + ud.rev100.toLocaleString());
+  set('rv-70',      'R' + rev70.toLocaleString());
+  set('rv-blended', ud.blended > 0 ? 'R' + ud.blended.toLocaleString() : '—');
 }
 
 function calcTotalCosts(occupiedUnits) {
-  const cook = parseInt(document.getElementById('c-cook')?.value) || 0;
-  const clean = parseInt(document.getElementById('c-clean')?.value) || 0;
-  const maint = parseInt(document.getElementById('c-maint')?.value) || 0;
-  const mgr = parseInt(document.getElementById('c-mgr')?.value) || 0;
-  const foodDay = parseInt(document.getElementById('c-food')?.value) || 0;
-  const cons = parseInt(document.getElementById('c-consumables')?.value) || 0;
-  const util = parseInt(document.getElementById('c-util')?.value) || 0;
-  const insure = parseInt(document.getElementById('c-insure')?.value) || 0;
-  const trans = parseInt(document.getElementById('c-transport')?.value) || 0;
-  const mktg = parseInt(document.getElementById('c-marketing')?.value) || 0;
+  const clean   = parseInt(document.getElementById('c-clean')?.value)      || 0;
+  const maint   = parseInt(document.getElementById('c-maint')?.value)      || 0;
+  const garden  = parseInt(document.getElementById('c-garden')?.value)     || 0;
+  const cook    = parseInt(document.getElementById('c-cook')?.value)       || 0;
+  const mgr     = parseInt(document.getElementById('c-mgr')?.value)        || 0;
+  const util    = parseInt(document.getElementById('c-util')?.value)       || 0;
+  const rates   = parseInt(document.getElementById('c-rates')?.value)      || 0;
+  const insure  = parseInt(document.getElementById('c-insure')?.value)     || 0;
+  const trans   = parseInt(document.getElementById('c-transport')?.value)  || 0;
+  const food    = parseInt(document.getElementById('c-food-total')?.value) || 0;
+  const mktg    = parseInt(document.getElementById('c-marketing')?.value)  || 0;
   const contingencyPct = parseInt(document.getElementById('c-contingency')?.value) || 10;
-  const foodMonth = foodDay * occupiedUnits * 30;
-  const base = cook + clean + maint + mgr + foodMonth + cons + util + insure + trans + mktg;
+  const extras  = getExtrasCost(occupiedUnits).total;
+
+  const base = clean + maint + garden + cook + mgr + util + rates + insure + trans + food + mktg + extras;
   return Math.round(base * (1 + contingencyPct / 100));
 }
 
+
 // ── GENERATE ──
 async function generateModel() {
-  const units = parseInt(document.getElementById('f-units').value) || 10;
+  const ud  = getUnitData();
   const occ = parseInt(document.getElementById('f-occ').value) || 80;
-  const rent = parseInt(document.getElementById('f-rent').value) || 12000;
   const deposit = parseInt(document.getElementById('f-deposit').value) || 2;
-  const unitSize = document.getElementById('f-unitsize').value;
   const mealPlan = getSelected('meal-plan-cards');
   const careLevel = getSelected('care-cards');
   const accomModel = getSelected('accom-model-cards');
   const communityTone = getSelected('tone-cards');
-  const weddingPostureVal = weddingPosture; // 'keep' | 'wind' | 'drop'
+  const weddingPostureVal = weddingPosture;
   const windMonths = document.getElementById('f-wind-months')?.value || '6';
   const weddingRev = parseInt(document.getElementById('f-wedding-rev')?.value) || 0;
-  const neighbours = parseInt(document.getElementById('f-neighbours')?.value) || 3;
+  const neighbours = parseInt(document.getElementById('f-neighbours')?.value) || 0;
   const vision = document.getElementById('f-vision').value.trim();
-  const extras = getChips('extras-chips');
   const weddingPerks = getChips('wedding-perks');
   const activities = getChips('activity-chips');
   const ageBands = getChips('age-chips');
 
-  const cook = parseInt(document.getElementById('c-cook').value) || 0;
-  const clean = parseInt(document.getElementById('c-clean').value) || 0;
-  const maint = parseInt(document.getElementById('c-maint').value) || 0;
-  const mgr = parseInt(document.getElementById('c-mgr').value) || 0;
-  const foodDay = parseInt(document.getElementById('c-food').value) || 0;
-  const cons = parseInt(document.getElementById('c-consumables').value) || 0;
-  const util = parseInt(document.getElementById('c-util').value) || 0;
-  const insure = parseInt(document.getElementById('c-insure').value) || 0;
-  const trans = parseInt(document.getElementById('c-transport').value) || 0;
-  const mktg = parseInt(document.getElementById('c-marketing').value) || 0;
+  const clean  = parseInt(document.getElementById('c-clean').value)      || 0;
+  const maint  = parseInt(document.getElementById('c-maint').value)      || 0;
+  const garden = parseInt(document.getElementById('c-garden').value)     || 0;
+  const cook   = parseInt(document.getElementById('c-cook').value)       || 0;
+  const mgr    = parseInt(document.getElementById('c-mgr').value)        || 0;
+  const util   = parseInt(document.getElementById('c-util').value)       || 0;
+  const rates  = parseInt(document.getElementById('c-rates').value)      || 0;
+  const insure = parseInt(document.getElementById('c-insure').value)     || 0;
+  const trans  = parseInt(document.getElementById('c-transport').value)  || 0;
+  const food   = parseInt(document.getElementById('c-food-total').value) || 0;
+  const mktg   = parseInt(document.getElementById('c-marketing').value)  || 0;
   const contingencyPct = parseInt(document.getElementById('c-contingency').value) || 10;
 
-  const occupied = Math.round(units * occ / 100);
-  const foodMonth = foodDay * occupied * 30;
-  const baseCosts = cook + clean + maint + mgr + foodMonth + cons + util + insure + trans + mktg;
-  const totalCosts = Math.round(baseCosts * (1 + contingencyPct / 100));
-  const rentalRevenue = occupied * rent;
-  const totalRevenue = rentalRevenue + weddingRev;
-  const netProfit = totalRevenue - totalCosts;
-  const margin = totalRevenue > 0 ? Math.round(netProfit / totalRevenue * 100) : 0;
-  const annualProfit = netProfit * 12;
-  const depositPool = units * rent * deposit;
+  const occupied      = Math.round(ud.totalUnits * occ / 100);
+  const extrasResult  = getExtrasCost(occupied);
+  const extrasCost    = extrasResult.total;
+  const rentalRevenue = Math.round(ud.rev100 * occ / 100);
+  const totalRevenue  = rentalRevenue + weddingRev;
+  const staffCosts    = clean + maint + garden + cook + mgr;
+  const overheads     = util + rates + insure + trans + food + mktg + extrasCost;
+  const baseCosts     = staffCosts + overheads;
+  const totalCosts    = Math.round(baseCosts * (1 + contingencyPct / 100));
+  const netProfit     = totalRevenue - totalCosts;
+  const margin        = totalRevenue > 0 ? Math.round(netProfit / totalRevenue * 100) : 0;
+  const annualProfit  = netProfit * 12;
+  const depositPool   = ud.totalUnits * ud.blended * deposit;
+  const breakeven     = ud.blended > 0 ? Math.ceil(totalCosts / ud.blended) : 0;
+  const breakevenPct  = ud.totalUnits > 0 ? Math.round(breakeven / ud.totalUnits * 100) : 0;
 
   document.getElementById('step-' + currentStep).classList.remove('active');
   document.getElementById('generating').classList.add('active');
@@ -1129,59 +1366,63 @@ async function generateModel() {
     document.getElementById('gen-status').textContent = statuses[si];
   }, 1800);
 
-  const prompt = `You are writing a professional but warm business model document for The Laughing Forest — a coastal dune forest venue on the South Coast of KZN, South Africa, currently operating as a wedding venue. The owner (Debbie) is expanding into retirement living.
+  const prompt = `You are writing a professional but warm business model document for The Laughing Forest — a coastal dune forest venue on the South Coast of KZN, South Africa. The owner (Debbie / Phil) is expanding into retirement living.
 
 BUSINESS CONCEPT:
-Long-term rental accommodation for people aged ${ageBands.join(', ')}. Located in Elysium, South Coast KZN — 55 minutes from Durban, in coastal dune forest 20 metres above sea level. Beautiful, peaceful, community-focused. NO medical care — just good living, good food, community, and the ocean.
+Long-term rental accommodation for people aged ${ageBands.join(', ')}. Located in Elysium, South Coast KZN — 55 minutes from Durban, in coastal dune forest 20 metres above sea level. NO medical care — just good living, community, and the ocean.
 
-INPUTS:
-- Units: ${units} (${unitSize})
-- Target occupancy: ${occ}% (${occupied} residents at target)
-- Monthly rental: R${rent.toLocaleString()} per resident (all-in)
-- Deposit: ${deposit} months upfront
+UNIT MIX (owner-confirmed):
+- 6 single cabin rooms with communal kitchen & shared deck: R${ud.aRent.toLocaleString()}/month each → R${(ud.aCount * ud.aRent).toLocaleString()}/month at 100%
+- 7 en-suite cabins (bedroom, private bathroom, lounge, outside deck): R${ud.bRent.toLocaleString()}/month each → R${(ud.bCount * ud.bRent).toLocaleString()}/month at 100%
+- 1 three-bedroom house: R${ud.cRent.toLocaleString()}/month → R${(ud.cCount * ud.cRent).toLocaleString()}/month at 100%
+- Total: ${ud.totalUnits} units. Full occupancy revenue: R${ud.rev100.toLocaleString()}/month. Blended rent: R${ud.blended.toLocaleString()}/unit.
+
+STAFFING MODEL (owner-confirmed):
+- On-site cleaner at basic wage (communal areas + refuse removal; residents can engage her directly for in-room cleaning at their own cost)
+- 5-day/week maintenance & grounds person
+- Weekly garden contractor (Bizzy Bees or similar)
+- Cook wage: ${cook > 0 ? 'R' + cook.toLocaleString() + '/month' : 'zero — fully self-catering model'}
+
+OWNER PAYS: Water, electricity, municipal rates, insurance.
+
+OTHER INPUTS:
+- Target occupancy: ${occ}% (${occupied} units occupied). Owner break-even estimate: 70%.
 - Meal plan: ${mealPlan}
 - Care level: ${careLevel}
-- Extras bundled in rent: ${extras.join(', ') || 'none specified'}
-- WEDDING VENUE POSTURE: ${weddingPostureVal === 'keep' ? 'KEEPING — both arms run simultaneously' : weddingPostureVal === 'wind' ? `WINDING DOWN — honouring existing bookings, no new ones, full exit in approximately ${windMonths} months` : 'DROPPING COMPLETELY — full pivot to retirement living only, no future weddings accepted'}
-- Wedding integration: ${weddingPostureVal === 'keep' ? (accomModel === 'neighbours' ? 'Wedding guest accommodation via neighbour referrals — resident rooms stay permanently leased' : 'Keep 1–2 rooms for wedding overflow') : 'N/A — exiting weddings'}
-- Resident wedding perks: ${weddingPostureVal === 'keep' ? weddingPerks.join(', ') : 'N/A — no weddings in this model'}
-- Wedding revenue: R${weddingRev.toLocaleString()}/month ${weddingPostureVal === 'drop' ? '(zero — full pivot)' : weddingPostureVal === 'wind' ? '(declining during wind-down period)' : '(ongoing)'}
-- Overflow accommodation: ${weddingPostureVal === 'keep' ? neighbours + ' neighbouring properties with referral agreements' : 'N/A'}
+- Bundled services: ${extrasResult.items.length ? extrasResult.items.map(i => i.amount !== null ? `${i.label} (R${i.amount.toLocaleString()}/month, ${i.basis})` : `${i.label} (${i.basis})`).join('; ') : 'none specified'}
+- Deposit: ${deposit} months
+- WEDDING VENUE POSTURE: ${weddingPostureVal === 'keep' ? 'KEEPING — both arms run simultaneously' : weddingPostureVal === 'wind' ? `WINDING DOWN — full exit in ~${windMonths} months` : 'DROPPING COMPLETELY — full pivot to retirement living only'}
+- Wedding revenue: R${weddingRev.toLocaleString()}/month
 - Activities: ${activities.join(', ')}
-- Community tone: ${communityTone}
 ${vision ? '- Owner vision: ' + vision : ''}
 
-FINANCIALS (calculated):
-- Monthly rental revenue: R${rentalRevenue.toLocaleString()}
-- Monthly wedding revenue: R${weddingRev.toLocaleString()} ${weddingPostureVal === 'drop' ? '(zero — no weddings)' : ''}
+FINANCIALS:
+- Monthly rental revenue at ${occ}%: R${rentalRevenue.toLocaleString()}
+- Monthly wedding revenue: R${weddingRev.toLocaleString()}
 - Total monthly revenue: R${totalRevenue.toLocaleString()}
-- Monthly staff costs: R${(cook + clean + maint + mgr).toLocaleString()}
-- Monthly food cost: R${foodMonth.toLocaleString()}
-- Monthly overheads: R${(util + insure + trans + mktg + cons).toLocaleString()}
+- Staff costs: R${staffCosts.toLocaleString()} (cleaner R${clean.toLocaleString()}, maintenance R${maint.toLocaleString()}, garden R${garden.toLocaleString()}, cook R${cook.toLocaleString()}, manager R${mgr.toLocaleString()})
+- Overheads: R${overheads.toLocaleString()} (utilities R${util.toLocaleString()}, rates R${rates.toLocaleString()}, insurance R${insure.toLocaleString()}, transport R${trans.toLocaleString()}, food R${food.toLocaleString()}, marketing R${mktg.toLocaleString()}, bundled extras R${extrasCost.toLocaleString()})
 - Contingency (${contingencyPct}%): R${Math.round(baseCosts * contingencyPct / 100).toLocaleString()}
-- Total monthly costs: R${totalCosts.toLocaleString()}
-- Net monthly profit: R${netProfit.toLocaleString()}
-- Profit margin: ${margin}%
+- Total costs: R${totalCosts.toLocaleString()}
+- Net monthly profit: R${netProfit.toLocaleString()} (${margin}% margin)
 - Annual net profit: R${annualProfit.toLocaleString()}
-- Initial deposit income (non-refundable working capital buffer): R${depositPool.toLocaleString()}
+- Break-even: ${breakeven} units occupied (${breakevenPct}% occupancy) — owner estimates 70%
+- Deposit pool at full occupancy: R${depositPool.toLocaleString()}
 
-Write a business model document with the following sections. Use plain HTML with these exact tags only: <h2>, <h3>, <p>, <ul><li>, <div class="alert-box alert-info">, <div class="alert-box alert-good">, <div class="alert-box alert-warn">. No other HTML. No markdown. No code blocks.
+Write a business model document with these sections using ONLY these HTML tags: <h2>, <h3>, <p>, <ul><li>, <div class="alert-box alert-info">, <div class="alert-box alert-good">, <div class="alert-box alert-warn">. No markdown, no code blocks.
 
-Sections to include:
-1. Executive Summary (2–3 paragraphs — warm, confident, specific to this property and concept)
-2. The Concept (what makes this different from a retirement village or care home — the Laughing Forest lifestyle proposition)
-3. Target Resident Profile (who this is for, what they want, why they choose this over alternatives)
-4. Revenue Model (explain the revenue streams with narrative — rental only if dropping weddings, or both arms if keeping. Be honest about what the numbers depend on.)
-5. Cost Structure (narrative explanation of the main cost categories and how they're managed)
-6. Financial Viability Assessment (interpret the numbers honestly — is this viable? What does it depend on? Include break-even occupancy. If wedding revenue is zero, flag the higher dependency on rental occupancy.)
-7. ${weddingPostureVal === 'keep' ? 'The Wedding Venue Integration (how the two arms complement each other — resident perks, wedding guest accommodation via neighbours, no conflict)' : weddingPostureVal === 'wind' ? 'Winding Down the Wedding Venue (practical steps to honour existing bookings, communicate the change, redeploy staff, update licences and zoning — and how the venue spaces become resident amenities)' : 'Repurposing the Venue Spaces (the hall, chapel, and outdoor areas are now exclusive resident amenities — how this enhances the retirement living offering, including practical ideas for use)'}
-8. Social Programme & Community Life (describe the lifestyle, activities, what a week might look like)
-9. Regulatory & Risk Considerations (lease agreements, no medical care boundary, zoning, insurance. ${weddingPostureVal !== 'keep' ? 'Include specific notes on liquor licence implications of ceasing wedding operations and any zoning consent use changes needed.' : ''})
-10. Next Steps (3–5 concrete actions to move forward — realistic, specific to this property and the chosen wedding posture)
+1. Executive Summary
+2. The Concept (not a retirement village — a home in the forest)
+3. Target Resident Profile
+4. Unit Mix & Revenue Model — IMPORTANT: describe all THREE unit types individually with their specific names, counts, and rand amounts. Do NOT collapse them into a blended average. Show: how many of each, what each type offers residents, what each earns at full occupancy, and what total rental revenue looks like at the target occupancy. Include the break-even unit count and what each additional unit above break-even adds to profit.
+5. Cost Structure & Staffing Model (the lean, owner-confirmed staffing approach)
+6. Financial Viability Assessment (honest interpretation; compare to owner's 70% break-even estimate)
+7. ${weddingPostureVal === 'keep' ? 'Wedding Venue Integration' : weddingPostureVal === 'wind' ? 'Winding Down the Wedding Venue' : 'Repurposing the Venue Spaces'}
+8. Social Programme & Community Life
+9. Regulatory & Risk Considerations
+10. Next Steps (3–5 specific, realistic actions)
 
-Tone: Warm, grounded, professional. This is for a small business owner — not a corporate investor. It should feel like it was written by someone who has visited the property and understood the vision. Celebrate what makes this special. Be honest about the numbers.
-
-IMPORTANT: Break-even occupancy = the number of units that need to be occupied to cover all costs. Calculate this as: total costs / rent per unit = ${Math.ceil(totalCosts / rent)} units minimum (${Math.round(Math.ceil(totalCosts / rent) / units * 100)}% occupancy).`;
+Tone: warm, grounded, professional. Written for a small business owner, not a corporate investor.`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -1210,27 +1451,27 @@ IMPORTANT: Break-even occupancy = the number of units that need to be occupied t
     const content = data.content?.[0]?.text || '';
 
     document.getElementById('generating').classList.remove('active');
-    renderOutput({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content });
+    renderOutput({ units: ud.totalUnits, occ, rent: ud.blended, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content });
 
   } catch (e) {
     clearInterval(statusInterval);
     document.getElementById('generating').classList.remove('active');
     document.getElementById('gen-status').textContent = '';
 
-    // Show a fallback model if API fails
-    const fallbackContent = buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision, weddingPostureVal, windMonths });
-    renderOutput({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content: fallbackContent });
+    const fallbackContent = buildFallback({ units: ud.totalUnits, occ, rent: ud.blended, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision, weddingPostureVal, windMonths, ud });
+    renderOutput({ units: ud.totalUnits, occ, rent: ud.blended, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content: fallbackContent });
     console.warn('API error, using fallback:', e.message);
   }
 }
 
-function buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision, weddingPostureVal = 'keep', windMonths = '6' }) {
+function buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision, weddingPostureVal = 'keep', windMonths = '6', ud = null }) {
+  const unitMixDesc = ud ? `6 single cabins at R${ud.aRent.toLocaleString()}/month, 7 en-suite cabins at R${ud.bRent.toLocaleString()}/month, and 1 three-bedroom house at R${ud.cRent.toLocaleString()}/month` : `${units} units at a blended rate of R${rent.toLocaleString()}/month`;
   const breakeven = Math.ceil(totalCosts / rent);
   const breakevenPct = Math.round(breakeven / units * 100);
   const viableWord = margin >= 20 ? 'strong' : margin >= 10 ? 'moderate' : margin >= 0 ? 'marginal' : 'challenging';
   return `
 <h2>Executive Summary</h2>
-<p>The Laughing Forest Retirement Living is a proposed expansion of the existing Laughing Forest wedding venue in Elysium on the South Coast of KZN. The concept converts existing accommodation into permanent long-term rental for active, independent residents aged 60–75 — offering coastal forest living, community, good food, and easy access to the town and local clinic, without the institutional feel of a retirement village.</p>
+<p>The Laughing Forest Retirement Living is a proposed expansion of the existing Laughing Forest wedding venue in Elysium on the South Coast of KZN. The concept offers long-term rental across a thoughtfully varied unit mix — ${unitMixDesc} — for active, independent residents aged 60–75. The location is coastal dune forest, 20 metres above sea level, 55 minutes from Durban.</p>
 <p>At ${units} units with a target occupancy of ${occ}%, the model generates estimated monthly revenue of R${totalRevenue.toLocaleString()} against estimated costs of R${totalCosts.toLocaleString()}, producing a monthly net ${netProfit >= 0 ? 'profit' : 'loss'} of R${Math.abs(netProfit).toLocaleString()} — a <strong>${margin}% margin</strong>. The outlook is ${viableWord}.</p>
 ${vision ? '<p><em>"' + vision + '"</em></p>' : ''}
 
@@ -1247,8 +1488,14 @@ ${vision ? '<p><em>"' + vision + '"</em></p>' : ''}
   <li>People who specifically want to avoid the medical / institutional feel</li>
 </ul>
 
-<h2>Revenue Model</h2>
-<p>The primary revenue stream is monthly rental at R${rent.toLocaleString()} per unit, all-inclusive. At ${occupied} occupied units (${occ}% occupancy), this generates R${(occupied * rent).toLocaleString()}/month in rental income. ${weddingRev > 0 ? 'The wedding venue continues to contribute an estimated R' + weddingRev.toLocaleString() + '/month in ceremony and catering revenue.' : ''}</p>
+<h2>Unit Mix & Revenue Model</h2>
+<p>The Laughing Forest offers three distinct accommodation types, each with its own price point and appeal:</p>
+<ul>
+  <li><strong>6 Single Cabins</strong> — private room with communal kitchen and shared deck. R${ud.aRent.toLocaleString()}/month. Ideal for independent singles who want community built in. Full occupancy contributes R${(ud.aCount * ud.aRent).toLocaleString()}/month.</li>
+  <li><strong>7 En-Suite Cabins</strong> — bedroom, private bathroom, lounge, outside deck. R${ud.bRent.toLocaleString()}/month. The core offering — private living with the forest on your doorstep. Full occupancy contributes R${(ud.bCount * ud.bRent).toLocaleString()}/month.</li>
+  <li><strong>1 Three-Bedroom House</strong> — R${ud.cRent.toLocaleString()}/month. Suited for a couple, a small family group, or a resident who simply wants more space. Contributes R${(ud.cCount * ud.cRent).toLocaleString()}/month at full occupancy.</li>
+</ul>
+<p>At full occupancy (${ud.totalUnits} units), total rental revenue is R${ud.rev100.toLocaleString()}/month. At the target occupancy of ${occ}% (${occupied} units occupied), monthly rental revenue is R${(Math.round(ud.rev100 * occ / 100)).toLocaleString()}. The blended average rent across all unit types is R${ud.blended.toLocaleString()}/unit. ${weddingRev > 0 ? 'The wedding venue contributes an additional R' + weddingRev.toLocaleString() + '/month.' : ''}</p>
 <p>The deposit structure (${document.getElementById('f-deposit').value} months upfront) provides R${depositPool.toLocaleString()} in working capital at full occupancy — a meaningful buffer for the startup phase.</p>
 <div class="alert-box alert-info"><strong>Break-even point:</strong> ${breakeven} of ${units} units occupied (${breakevenPct}% occupancy). Below this, the model runs at a loss. Above it, each additional occupied unit contributes R${Math.round(rent - totalCosts / units).toLocaleString()}/month directly to profit.</div>
 
@@ -1355,6 +1602,8 @@ function resetWizard() {
 }
 
 initPills();
+syncExtraCostFields();
+updateSummary();
 
 /* ══════════════════════════════════════════════════════════
    GROQ CHATBOT — Forest Guide
@@ -1376,14 +1625,16 @@ The Laughing Forest is an established wedding and events venue in Elysium, South
 THE RETIREMENT LIVING CONCEPT:
 - Long-term rental (NOT frail care, NOT assisted living, NOT a retirement village)
 - Residents are fully independent, aged 60–75
-- 1–2 meals per day provided by existing kitchen staff
+- CONFIRMED: The owner has decided to DROP the wedding venue entirely — full pivot to retirement living only
+- No future wedding bookings will be accepted; any existing contracted bookings must be honoured before closing
+- The wedding venue hall, chapel and outdoor spaces become exclusive resident amenities
+- Meal plan is TBD — currently leaning toward fully self-catering (single cabin residents share communal kitchen; en-suite cabins and house are self-contained)
 - Transport to local clinic and town for shopping (scheduled days)
 - Social programme: bowling at Pennington, golf, beach walks, braais, day trips
-- Current staff stay on — cook, housekeeper, maintenance, manager (Debbie)
+- Staffing model confirmed: on-site cleaner at basic wage (communal areas + refuse; residents hire her directly for in-room work at their own cost), 5-day maintenance/grounds person, weekly garden contractor (Bizzy Bees or similar)
 - No medical care of any kind — this is a deliberate and legally important position
-- The wedding venue continues operating alongside — residents can volunteer at bar/décor if they wish (fully opt-in)
-- Wedding guest accommodation: overflow to neighbouring properties via referral agreements
-- Property has 7 double/twin rooms, 4 self-catering family cabins, 1 honeymoon suite — some or all converting to permanent resident rooms
+- Property unit mix confirmed: 6 single cabin rooms with communal kitchen & deck (R6,500/month), 7 en-suite cabins with bedroom/bathroom/lounge/deck (R10,000/month), 1 three-bedroom house (R15,000/month) — 14 units total, R124,000/month at full occupancy
+- Owner pays: water, electricity, municipal rates, insurance — all included in rent
 
 FRAIL CARE REGULATION — CRITICAL KNOWLEDGE:
 The Older Persons Act 13 of 2006 governs care facilities for older people in South Africa.
@@ -1634,27 +1885,24 @@ async function cpSend() {
 // ── GET WIZARD STATE FOR CONTEXT ──
 function getWizardContext() {
   try {
-    const units = document.getElementById('f-units')?.value;
-    const occ = document.getElementById('f-occ')?.value;
-    const rent = document.getElementById('f-rent')?.value;
-    const mealPlan = document.querySelector('#meal-plan-cards .radio-card.on')?.dataset.val;
+    const ud  = getUnitData();
+    const occ = parseInt(document.getElementById('f-occ')?.value) || 80;
+    const mealPlan  = document.querySelector('#meal-plan-cards .radio-card.on')?.dataset.val;
     const careLevel = document.querySelector('#care-cards .radio-card.on')?.dataset.val;
-    const contingency = document.getElementById('c-contingency')?.value;
-    const weddingRev = document.getElementById('f-wedding-rev')?.value;
-    const cook = document.getElementById('c-cook')?.value;
-    const mgr = document.getElementById('c-mgr')?.value;
+    const contingency  = document.getElementById('c-contingency')?.value;
+    const weddingRev   = document.getElementById('f-wedding-rev')?.value;
     const step = currentStep;
 
     return [
       `Current wizard step: ${step} of 5`,
-      units ? `Units planned: ${units}` : '',
+      `Unit mix: ${ud.aCount} single cabins @R${ud.aRent.toLocaleString()}, ${ud.bCount} en-suite cabins @R${ud.bRent.toLocaleString()}, ${ud.cCount} house @R${ud.cRent.toLocaleString()}`,
+      `Total units: ${ud.totalUnits} | Full occupancy revenue: R${ud.rev100.toLocaleString()}/month | Blended rent: R${ud.blended.toLocaleString()}`,
       occ ? `Target occupancy: ${occ}%` : '',
-      rent ? `Monthly rent: R${parseInt(rent).toLocaleString()}` : '',
-      mealPlan ? `Meal plan: ${mealPlan}` : '',
+      mealPlan  ? `Meal plan: ${mealPlan}` : '',
       careLevel ? `Care level: ${careLevel}` : '',
       contingency ? `Contingency buffer: ${contingency}%` : '',
-      weddingRev ? `Wedding revenue retained: R${parseInt(weddingRev).toLocaleString()}/month` : '',
-      cook && mgr ? `Staff costs visible: cook R${cook}, manager R${mgr}` : ''
+      weddingRev  ? `Wedding revenue: R${parseInt(weddingRev).toLocaleString()}/month` : '',
+      `Wedding posture: ${weddingPosture}`
     ].filter(Boolean).join('\n');
   } catch { return ''; }
 }
