@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<!-- build: v2-ceremony-only -->
 <title>The Laughing Forest — Retirement Living Business Model</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -842,16 +846,20 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
     <div class="step-desc">This is the most significant strategic decision. Choose your posture — the rest of this step and the generated model will adapt accordingly.</div>
 
     <div class="section-label">Wedding venue posture</div>
-    <div class="radio-cards" style="grid-template-columns:1fr 1fr 1fr;" id="wedding-posture-cards">
+    <div class="radio-cards" style="grid-template-columns:1fr 1fr;" id="wedding-posture-cards">
       <div class="radio-card" onclick="setWeddingPosture('keep')" data-val="keep">
         <div class="radio-card-title">✓ Keep it running</div>
         <div class="radio-card-desc">Weddings continue alongside retirement living. Two complementary income streams.</div>
+      </div>
+      <div class="radio-card on" onclick="setWeddingPosture('ceremony')" data-val="ceremony">
+        <div class="radio-card-title">⛪ Ceremony only</div>
+        <div class="radio-card-desc">Drop the reception. Keep chapel ceremonies &amp; photo-location hire — the chapel and sound system are already paid for.</div>
       </div>
       <div class="radio-card" onclick="setWeddingPosture('wind')" data-val="wind">
         <div class="radio-card-title">↓ Wind it down</div>
         <div class="radio-card-desc">Phase out weddings over time as retirement living grows. Honour existing bookings.</div>
       </div>
-      <div class="radio-card on" onclick="setWeddingPosture('drop')" data-val="drop">
+      <div class="radio-card" onclick="setWeddingPosture('drop')" data-val="drop">
         <div class="radio-card-title">✕ Drop it completely</div>
         <div class="radio-card-desc">Full pivot. Retirement living only — no future wedding bookings accepted.</div>
       </div>
@@ -902,6 +910,92 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
       </div>
     </div>
 
+    <!-- CEREMONY ONLY: drop the reception, keep chapel ceremonies + photo-location hire -->
+    <div id="wedding-ceremony-section">
+      <div class="alert-box alert-good" style="margin-top:14px;">
+        The lean middle path. No catering, no reception staffing, no late-night bar service — just the chapel, the sound system, and the view. Both are already paid for, so running costs are mostly a few hours of staff time per booking.
+      </div>
+
+      <hr class="divider"/>
+      <div class="section-label">Ceremony bookings</div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>Ceremonies per month (avg)</label>
+          <input type="number" id="f-cer-count" value="3" min="0" max="20" step="1" oninput="updateCeremonyCalc()"/>
+          <div class="hint">You're seeing 2–4 or more enquiries a month for this</div>
+        </div>
+        <div class="field-group">
+          <label>Average ceremony length</label>
+          <select id="f-cer-hours" onchange="updateCeremonyCalc()">
+            <option value="1">1 hour</option>
+            <option value="2" selected>2 hours</option>
+            <option value="3">3 hours</option>
+            <option value="4">4 hours</option>
+            <option value="5">5 hours</option>
+            <option value="6">6 hours</option>
+          </select>
+          <div class="hint">Most ceremonies run about 2 hours, chapel to confetti</div>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+      <div class="section-label">Hourly ceremony pricing</div>
+      <div class="hint" style="margin-bottom:10px;">Set what you'll charge for each hour of the booking. The first hour is usually priced highest — it covers setup and the ceremony itself — with later hours (photos, guests lingering, pack-down) tapering down.</div>
+      <div class="field-row">
+        <div class="field-group cer-hour-field" data-hour="1"><label>Hour 1</label><input type="number" id="f-cer-hr-1" value="14000" step="500" min="0" oninput="updateCeremonyCalc()"/></div>
+        <div class="field-group cer-hour-field" data-hour="2"><label>Hour 2</label><input type="number" id="f-cer-hr-2" value="4000" step="500" min="0" oninput="updateCeremonyCalc()"/></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group cer-hour-field" data-hour="3"><label>Hour 3</label><input type="number" id="f-cer-hr-3" value="3000" step="500" min="0" oninput="updateCeremonyCalc()"/></div>
+        <div class="field-group cer-hour-field" data-hour="4"><label>Hour 4</label><input type="number" id="f-cer-hr-4" value="2500" step="500" min="0" oninput="updateCeremonyCalc()"/></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group cer-hour-field" data-hour="5"><label>Hour 5</label><input type="number" id="f-cer-hr-5" value="2000" step="500" min="0" oninput="updateCeremonyCalc()"/></div>
+        <div class="field-group cer-hour-field" data-hour="6"><label>Hour 6</label><input type="number" id="f-cer-hr-6" value="2000" step="500" min="0" oninput="updateCeremonyCalc()"/></div>
+      </div>
+      <div class="hint" id="cer-revenue-per-event" style="margin-top:2px;font-weight:600;color:var(--forest);"></div>
+
+      <hr class="divider"/>
+      <div class="section-label">Photo-location bookings</div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>Photo sessions per month</label>
+          <input type="number" id="f-photo-count" value="2" min="0" max="20" step="1" oninput="updateCeremonyCalc()"/>
+          <div class="hint">Couples or photographers wanting the grounds without booking the chapel</div>
+        </div>
+        <div class="field-group">
+          <label>Fee per photo session (R)</label>
+          <input type="number" id="f-photo-fee" value="2500" step="250" min="0" oninput="updateCeremonyCalc()"/>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+      <div class="section-label">Direct running costs</div>
+      <div class="field-row">
+        <div class="field-group">
+          <label>Staff cost per ceremony (R)</label>
+          <input type="number" id="f-cer-cost" value="900" step="100" min="0" oninput="updateCeremonyCalc()"/>
+          <div class="hint">Opening the chapel, running sound, tidying up after</div>
+        </div>
+        <div class="field-group">
+          <label>Staff cost per photo session (R)</label>
+          <input type="number" id="f-photo-cost" value="300" step="50" min="0" oninput="updateCeremonyCalc()"/>
+          <div class="hint">Grounds access + a quick check-in</div>
+        </div>
+      </div>
+      <div class="alert-box alert-info" style="margin-top:12px;">
+        The chapel and audio equipment are already owned, so there's no equipment cost here — only the staff time to open up, run the ceremony, and reset the space. This direct cost is added to your overall running costs in Step 3's totals.
+      </div>
+
+      <div class="summary-strip" id="cer-summary-strip" style="margin-top:20px;">
+        <div class="strip-item"><div class="strip-val" id="cer-s-revenue">R0</div><div class="strip-label">Gross wedding revenue/mo</div></div>
+        <div class="strip-item"><div class="strip-val" id="cer-s-cost">R0</div><div class="strip-label">Direct costs/mo</div></div>
+        <div class="strip-item"><div class="strip-val" id="cer-s-net">R0</div><div class="strip-label">Net contribution/mo</div></div>
+      </div>
+
+      <input type="hidden" id="f-wedding-cost" value="0"/>
+    </div>
+
     <!-- WIND DOWN: phased exit -->
     <div id="wedding-wind-section" style="display:none;">
       <div class="alert-box alert-warn" style="margin-top:14px;">
@@ -933,7 +1027,7 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
     </div>
 
     <!-- DROP: full pivot -->
-    <div id="wedding-drop-section">
+    <div id="wedding-drop-section" style="display:none;">
       <div class="alert-box alert-warn" style="margin-top:14px;">
         <strong>Full pivot considerations:</strong>
         <ul style="margin-top:8px;padding-left:16px;font-size:13px;line-height:1.8;">
@@ -1130,23 +1224,31 @@ function goTo(n) {
 }
 
 // ── WEDDING POSTURE ──
-let weddingPosture = 'drop'; // 'keep' | 'wind' | 'drop'
+let weddingPosture = 'ceremony'; // 'keep' | 'ceremony' | 'wind' | 'drop'
 
 function setWeddingPosture(posture) {
   weddingPosture = posture;
   selectCard(document.querySelector(`#wedding-posture-cards [data-val="${posture}"]`), 'wedding-posture-cards');
   document.getElementById('wedding-keep-section').style.display = posture === 'keep' ? 'block' : 'none';
+  document.getElementById('wedding-ceremony-section').style.display = posture === 'ceremony' ? 'block' : 'none';
   document.getElementById('wedding-wind-section').style.display = posture === 'wind' ? 'block' : 'none';
   document.getElementById('wedding-drop-section').style.display = posture === 'drop' ? 'block' : 'none';
 
   const revField = document.getElementById('f-wedding-rev');
   const neighboursField = document.getElementById('f-neighbours');
+  const costField = document.getElementById('f-wedding-cost');
+  if (costField && posture !== 'ceremony') costField.value = 0;
 
   if (posture === 'drop') {
     revField.value = 0;
     revField.setAttribute('readonly', true);
     revField.style.cssText = 'background:var(--sand);color:var(--muted);cursor:not-allowed;width:100%;font-family:var(--ff-b);font-size:14px;padding:10px 13px;border:1.5px solid var(--border);border-radius:7px;';
     if (neighboursField) neighboursField.value = 0;
+  } else if (posture === 'ceremony') {
+    revField.setAttribute('readonly', true);
+    revField.style.cssText = 'background:var(--sand);color:var(--muted);cursor:not-allowed;width:100%;font-family:var(--ff-b);font-size:14px;padding:10px 13px;border:1.5px solid var(--border);border-radius:7px;';
+    if (neighboursField) neighboursField.value = 0;
+    updateCeremonyCalc();
   } else if (posture === 'wind') {
     revField.removeAttribute('readonly');
     revField.style.cssText = '';
@@ -1161,6 +1263,50 @@ function setWeddingPosture(posture) {
     if (parseInt(revField.value) < 5000) revField.value = 25000;
     if (neighboursField) neighboursField.value = neighboursField.value || 3;
   }
+  updateSummary();
+}
+
+// ── CEREMONY-ONLY MODEL — hourly pricing, photo sessions, direct costs ──
+function updateCeremonyHourVisibility() {
+  const hours = parseInt(document.getElementById('f-cer-hours')?.value) || 2;
+  document.querySelectorAll('.cer-hour-field').forEach(el => {
+    const h = parseInt(el.dataset.hour);
+    el.style.display = h <= hours ? '' : 'none';
+  });
+}
+
+function updateCeremonyCalc() {
+  updateCeremonyHourVisibility();
+  const hours = parseInt(document.getElementById('f-cer-hours')?.value) || 2;
+
+  let perCeremony = 0;
+  for (let h = 1; h <= hours; h++) {
+    perCeremony += parseInt(document.getElementById('f-cer-hr-' + h)?.value) || 0;
+  }
+
+  const cerCount   = parseInt(document.getElementById('f-cer-count')?.value)   || 0;
+  const photoCount = parseInt(document.getElementById('f-photo-count')?.value) || 0;
+  const photoFee   = parseInt(document.getElementById('f-photo-fee')?.value)   || 0;
+  const cerCost    = parseInt(document.getElementById('f-cer-cost')?.value)    || 0;
+  const photoCost  = parseInt(document.getElementById('f-photo-cost')?.value)  || 0;
+
+  const ceremonyRevenue = perCeremony * cerCount;
+  const photoRevenue    = photoFee * photoCount;
+  const grossRevenue    = ceremonyRevenue + photoRevenue;
+  const directCost      = (cerCost * cerCount) + (photoCost * photoCount);
+  const netContribution = grossRevenue - directCost;
+
+  const revField  = document.getElementById('f-wedding-rev');
+  const costField = document.getElementById('f-wedding-cost');
+  if (revField)  revField.value  = grossRevenue;
+  if (costField) costField.value = directCost;
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('cer-revenue-per-event', 'R' + perCeremony.toLocaleString() + ' per ceremony (' + hours + ' hour' + (hours > 1 ? 's' : '') + ') → R' + grossRevenue.toLocaleString() + '/month gross across ' + cerCount + ' ceremon' + (cerCount === 1 ? 'y' : 'ies') + ' + ' + photoCount + ' photo session' + (photoCount !== 1 ? 's' : ''));
+  set('cer-s-revenue', 'R' + grossRevenue.toLocaleString());
+  set('cer-s-cost', 'R' + directCost.toLocaleString());
+  set('cer-s-net', 'R' + netContribution.toLocaleString());
+
   updateSummary();
 }
 
@@ -1296,8 +1442,9 @@ function calcTotalCosts(occupiedUnits) {
   const mktg    = parseInt(document.getElementById('c-marketing')?.value)  || 0;
   const contingencyPct = parseInt(document.getElementById('c-contingency')?.value) || 10;
   const extras  = getExtrasCost(occupiedUnits).total;
+  const weddingCost = parseInt(document.getElementById('f-wedding-cost')?.value) || 0;
 
-  const base = clean + maint + garden + cook + mgr + util + rates + insure + trans + food + mktg + extras;
+  const base = clean + maint + garden + cook + mgr + util + rates + insure + trans + food + mktg + extras + weddingCost;
   return Math.round(base * (1 + contingencyPct / 100));
 }
 
@@ -1314,11 +1461,23 @@ async function generateModel() {
   const weddingPostureVal = weddingPosture;
   const windMonths = document.getElementById('f-wind-months')?.value || '6';
   const weddingRev = parseInt(document.getElementById('f-wedding-rev')?.value) || 0;
+  const weddingDirectCost = parseInt(document.getElementById('f-wedding-cost')?.value) || 0;
   const neighbours = parseInt(document.getElementById('f-neighbours')?.value) || 0;
   const vision = document.getElementById('f-vision').value.trim();
   const weddingPerks = getChips('wedding-perks');
   const activities = getChips('activity-chips');
   const ageBands = getChips('age-chips');
+
+  // Ceremony-only model detail (used when weddingPostureVal === 'ceremony')
+  const cerHours    = parseInt(document.getElementById('f-cer-hours')?.value)  || 2;
+  const cerCount     = parseInt(document.getElementById('f-cer-count')?.value)  || 0;
+  const photoCount   = parseInt(document.getElementById('f-photo-count')?.value) || 0;
+  const photoFee     = parseInt(document.getElementById('f-photo-fee')?.value)   || 0;
+  const cerCostEach   = parseInt(document.getElementById('f-cer-cost')?.value)   || 0;
+  const photoCostEach = parseInt(document.getElementById('f-photo-cost')?.value) || 0;
+  const cerHourRates = [];
+  for (let h = 1; h <= cerHours; h++) cerHourRates.push(parseInt(document.getElementById('f-cer-hr-' + h)?.value) || 0);
+  const cerPerEvent = cerHourRates.reduce((a, b) => a + b, 0);
 
   const clean  = parseInt(document.getElementById('c-clean').value)      || 0;
   const maint  = parseInt(document.getElementById('c-maint').value)      || 0;
@@ -1339,7 +1498,7 @@ async function generateModel() {
   const rentalRevenue = Math.round(ud.rev100 * occ / 100);
   const totalRevenue  = rentalRevenue + weddingRev;
   const staffCosts    = clean + maint + garden + cook + mgr;
-  const overheads     = util + rates + insure + trans + food + mktg + extrasCost;
+  const overheads     = util + rates + insure + trans + food + mktg + extrasCost + weddingDirectCost;
   const baseCosts     = staffCosts + overheads;
   const totalCosts    = Math.round(baseCosts * (1 + contingencyPct / 100));
   const netProfit     = totalRevenue - totalCosts;
@@ -1391,17 +1550,21 @@ OTHER INPUTS:
 - Care level: ${careLevel}
 - Bundled services: ${extrasResult.items.length ? extrasResult.items.map(i => i.amount !== null ? `${i.label} (R${i.amount.toLocaleString()}/month, ${i.basis})` : `${i.label} (${i.basis})`).join('; ') : 'none specified'}
 - Deposit: ${deposit} months
-- WEDDING VENUE POSTURE: ${weddingPostureVal === 'keep' ? 'KEEPING — both arms run simultaneously' : weddingPostureVal === 'wind' ? `WINDING DOWN — full exit in ~${windMonths} months` : 'DROPPING COMPLETELY — full pivot to retirement living only'}
-- Wedding revenue: R${weddingRev.toLocaleString()}/month
+- WEDDING VENUE POSTURE: ${weddingPostureVal === 'keep' ? 'KEEPING — both arms run simultaneously' : weddingPostureVal === 'ceremony' ? 'CEREMONY ONLY — reception dropped, chapel ceremonies and photo-location hire continue' : weddingPostureVal === 'wind' ? `WINDING DOWN — full exit in ~${windMonths} months` : 'DROPPING COMPLETELY — full pivot to retirement living only'}
+${weddingPostureVal === 'ceremony' ? `- Ceremony pricing: hourly tiers R${cerHourRates.map(r => r.toLocaleString()).join(' / R')} for hours 1–${cerHours} → R${cerPerEvent.toLocaleString()} per ceremony
+- Ceremony volume: ${cerCount} ceremonies/month, average ${cerHours} hour${cerHours > 1 ? 's' : ''} each
+- Photo-location bookings: ${photoCount}/month at R${photoFee.toLocaleString()} each (no chapel time, grounds/photo access only)
+- Direct running cost: R${cerCostEach.toLocaleString()}/ceremony + R${photoCostEach.toLocaleString()}/photo session — staff time to open, run and reset the space (chapel and audio equipment already owned, no equipment cost)
+- Wedding gross revenue: R${weddingRev.toLocaleString()}/month | Direct wedding costs: R${weddingDirectCost.toLocaleString()}/month | Net wedding contribution: R${(weddingRev - weddingDirectCost).toLocaleString()}/month` : `- Wedding revenue: R${weddingRev.toLocaleString()}/month`}
 - Activities: ${activities.join(', ')}
 ${vision ? '- Owner vision: ' + vision : ''}
 
 FINANCIALS:
 - Monthly rental revenue at ${occ}%: R${rentalRevenue.toLocaleString()}
-- Monthly wedding revenue: R${weddingRev.toLocaleString()}
+- Monthly wedding revenue: R${weddingRev.toLocaleString()}${weddingDirectCost > 0 ? ' (direct wedding costs of R' + weddingDirectCost.toLocaleString() + '/month are included in overheads below)' : ''}
 - Total monthly revenue: R${totalRevenue.toLocaleString()}
 - Staff costs: R${staffCosts.toLocaleString()} (cleaner R${clean.toLocaleString()}, maintenance R${maint.toLocaleString()}, garden R${garden.toLocaleString()}, cook R${cook.toLocaleString()}, manager R${mgr.toLocaleString()})
-- Overheads: R${overheads.toLocaleString()} (utilities R${util.toLocaleString()}, rates R${rates.toLocaleString()}, insurance R${insure.toLocaleString()}, transport R${trans.toLocaleString()}, food R${food.toLocaleString()}, marketing R${mktg.toLocaleString()}, bundled extras R${extrasCost.toLocaleString()})
+- Overheads: R${overheads.toLocaleString()} (utilities R${util.toLocaleString()}, rates R${rates.toLocaleString()}, insurance R${insure.toLocaleString()}, transport R${trans.toLocaleString()}, food R${food.toLocaleString()}, marketing R${mktg.toLocaleString()}, bundled extras R${extrasCost.toLocaleString()}${weddingDirectCost > 0 ? ', wedding direct costs R' + weddingDirectCost.toLocaleString() : ''})
 - Contingency (${contingencyPct}%): R${Math.round(baseCosts * contingencyPct / 100).toLocaleString()}
 - Total costs: R${totalCosts.toLocaleString()}
 - Net monthly profit: R${netProfit.toLocaleString()} (${margin}% margin)
@@ -1417,7 +1580,7 @@ Write a business model document with these sections using ONLY these HTML tags: 
 4. Unit Mix & Revenue Model — IMPORTANT: describe all THREE unit types individually with their specific names, counts, and rand amounts. Do NOT collapse them into a blended average. Show: how many of each, what each type offers residents, what each earns at full occupancy, and what total rental revenue looks like at the target occupancy. Include the break-even unit count and what each additional unit above break-even adds to profit.
 5. Cost Structure & Staffing Model (the lean, owner-confirmed staffing approach)
 6. Financial Viability Assessment (honest interpretation; compare to owner's 70% break-even estimate)
-7. ${weddingPostureVal === 'keep' ? 'Wedding Venue Integration' : weddingPostureVal === 'wind' ? 'Winding Down the Wedding Venue' : 'Repurposing the Venue Spaces'}
+7. ${weddingPostureVal === 'keep' ? 'Wedding Venue Integration' : weddingPostureVal === 'ceremony' ? 'The Ceremony-Only Wedding Model' : weddingPostureVal === 'wind' ? 'Winding Down the Wedding Venue' : 'Repurposing the Venue Spaces'}
 8. Social Programme & Community Life
 9. Regulatory & Risk Considerations
 10. Next Steps (3–5 specific, realistic actions)
@@ -1458,13 +1621,13 @@ Tone: warm, grounded, professional. Written for a small business owner, not a co
     document.getElementById('generating').classList.remove('active');
     document.getElementById('gen-status').textContent = '';
 
-    const fallbackContent = buildFallback({ units: ud.totalUnits, occ, rent: ud.blended, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision, weddingPostureVal, windMonths, ud });
+    const fallbackContent = buildFallback({ units: ud.totalUnits, occ, rent: ud.blended, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, weddingDirectCost, mealPlan, activities, vision, weddingPostureVal, windMonths, ud, cerCount, cerHours, cerHourRates, cerPerEvent, photoCount, photoFee, cerCostEach, photoCostEach });
     renderOutput({ units: ud.totalUnits, occ, rent: ud.blended, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, content: fallbackContent });
     console.warn('API error, using fallback:', e.message);
   }
 }
 
-function buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, mealPlan, activities, vision, weddingPostureVal = 'keep', windMonths = '6', ud = null }) {
+function buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, weddingDirectCost = 0, mealPlan, activities, vision, weddingPostureVal = 'keep', windMonths = '6', ud = null, cerCount = 0, cerHours = 2, cerHourRates = [], cerPerEvent = 0, photoCount = 0, photoFee = 0, cerCostEach = 0, photoCostEach = 0 }) {
   const unitMixDesc = ud ? `6 single cabins at R${ud.aRent.toLocaleString()}/month, 7 en-suite cabins at R${ud.bRent.toLocaleString()}/month, and 1 three-bedroom house at R${ud.cRent.toLocaleString()}/month` : `${units} units at a blended rate of R${rent.toLocaleString()}/month`;
   const breakeven = Math.ceil(totalCosts / rent);
   const breakevenPct = Math.round(breakeven / units * 100);
@@ -1500,17 +1663,23 @@ ${vision ? '<p><em>"' + vision + '"</em></p>' : ''}
 <div class="alert-box alert-info"><strong>Break-even point:</strong> ${breakeven} of ${units} units occupied (${breakevenPct}% occupancy). Below this, the model runs at a loss. Above it, each additional occupied unit contributes R${Math.round(rent - totalCosts / units).toLocaleString()}/month directly to profit.</div>
 
 <h2>Cost Structure</h2>
-<p>Staff costs (cook, housekeeper, maintenance, management) form the largest fixed expense. These are largely existing staff — a key advantage, as training and recruitment costs are avoided. Food costs scale with occupancy, which provides a natural hedge. Fixed overheads (utilities, insurance, transport) are relatively contained at a property of this size.</p>
+<p>Staff costs (cook, housekeeper, maintenance, management) form the largest fixed expense. These are largely existing staff — a key advantage, as training and recruitment costs are avoided. Food costs scale with occupancy, which provides a natural hedge. Fixed overheads (utilities, insurance, transport) are relatively contained at a property of this size.${weddingDirectCost > 0 ? ' The wedding side of the business now also carries a small direct cost line — R' + weddingDirectCost.toLocaleString() + '/month for the staff time to open, run and reset the chapel and grounds for ceremonies and photo sessions — which is folded into these overheads.' : ''}</p>
 <p>A contingency of ${document.getElementById('c-contingency').value}% has been applied to all costs to account for unplanned repairs, price increases, and voids.</p>
 
 <h2>Financial Viability Assessment</h2>
 <p>The model produces a <strong>${viableWord}</strong> financial picture at the assumed inputs. A ${margin}% margin ${margin >= 20 ? 'is healthy for a small hospitality business and provides meaningful owner income.' : margin >= 10 ? 'is acceptable but leaves limited buffer — reducing costs or increasing occupancy or rent would strengthen the position.' : margin >= 0 ? 'is tight. Careful cost control and rapid occupancy growth are essential.' : 'means the model loses money at these inputs. Either the rent needs to increase, costs need to reduce, or occupancy assumptions need to be revisited.'}</p>
 <div class="alert-box ${margin >= 15 ? 'alert-good' : margin >= 0 ? 'alert-warn' : 'alert-info'}"><strong>Key sensitivity:</strong> Occupancy is the single biggest driver. Every additional resident above break-even (${breakeven} units) adds R${Math.round(rent - totalCosts / units).toLocaleString()} to monthly profit. Getting to ${Math.round(breakevenPct + 10)}% occupancy quickly is the most important early milestone.</div>
 
-<h2>${weddingPostureVal === 'keep' ? 'Wedding Venue Integration' : weddingPostureVal === 'wind' ? 'Winding Down the Wedding Venue' : 'Repurposing the Venue Spaces'}</h2>
+<h2>${weddingPostureVal === 'keep' ? 'Wedding Venue Integration' : weddingPostureVal === 'ceremony' ? 'The Ceremony-Only Wedding Model' : weddingPostureVal === 'wind' ? 'Winding Down the Wedding Venue' : 'Repurposing the Venue Spaces'}</h2>
 ${weddingPostureVal === 'keep' ? `
 <p>The wedding venue continues to operate as before. On wedding days, residents are given friendly advance notice. Participation is entirely voluntary — some residents may love being part of the occasion by helping behind the bar or with flowers; others will simply enjoy the festive atmosphere from their stoep. No resident is obligated to engage.</p>
 <p>Wedding guest accommodation is handled via referral agreements with ${document.getElementById('f-neighbours')?.value || 3} neighbouring properties in Elysium — keeping resident rooms permanently leased and occupied while maintaining the community of goodwill with local neighbours.</p>
+` : weddingPostureVal === 'ceremony' ? `
+<p>The reception side of the business — catering, a full bar service, late-night staffing — is dropped. What stays is the part of the business that's simplest to run and matches what enquiries are actually asking for: chapel ceremonies and photo-location bookings. Both use assets already owned outright — the chapel and the sound system — so there's no equipment spend behind this decision, only staff time on the day.</p>
+<p>Pricing is structured by the hour: ${cerHourRates.length ? cerHourRates.map((r, i) => 'R' + r.toLocaleString() + ' for hour ' + (i + 1)).join(', ') : ''} — R${cerPerEvent.toLocaleString()} per ${cerHours}-hour ceremony in total. The first hour is priced highest to cover setup and the ceremony itself, with later hours (photos, guests lingering, pack-down) tapering down. At an average of ${cerCount} ceremonies a month, that's R${(cerPerEvent * cerCount).toLocaleString()}/month in ceremony revenue alone.</p>
+<p>Photo-location bookings — couples or photographers wanting the coastal forest backdrop without the chapel — add a further R${(photoFee * photoCount).toLocaleString()}/month at ${photoCount} sessions and R${photoFee.toLocaleString()} each. Combined gross wedding revenue is R${weddingRev.toLocaleString()}/month.</p>
+<p>Running this costs R${cerCostEach.toLocaleString()} per ceremony and R${photoCostEach.toLocaleString()} per photo session — the staff time to open up, run the sound, and reset the space — totalling R${weddingDirectCost.toLocaleString()}/month. Net wedding contribution after these direct costs is R${(weddingRev - weddingDirectCost).toLocaleString()}/month, which flows straight into the overall monthly profit alongside rental income.</p>
+<div class="alert-box alert-info">The current call volume — 2–4+ enquiries a month specifically for ceremonies and photo locations — suggests there's room to test pricing here. If ceremonies keep booking out at these rates, the first-hour price in particular has headroom to move.</div>
 ` : weddingPostureVal === 'wind' ? `
 <p>The decision to wind down the wedding side of the business over approximately ${windMonths} months is a measured and low-risk approach. All existing contracted weddings are honoured in full — this is both a legal obligation and a reputational one. No new bookings are accepted from the date the decision is made.</p>
 <ul>
@@ -1603,6 +1772,7 @@ function resetWizard() {
 
 initPills();
 syncExtraCostFields();
+updateCeremonyCalc();
 updateSummary();
 
 /* ══════════════════════════════════════════════════════════
@@ -1625,9 +1795,11 @@ The Laughing Forest is an established wedding and events venue in Elysium, South
 THE RETIREMENT LIVING CONCEPT:
 - Long-term rental (NOT frail care, NOT assisted living, NOT a retirement village)
 - Residents are fully independent, aged 60–75
-- CONFIRMED: The owner has decided to DROP the wedding venue entirely — full pivot to retirement living only
-- No future wedding bookings will be accepted; any existing contracted bookings must be honoured before closing
-- The wedding venue hall, chapel and outdoor spaces become exclusive resident amenities
+- CONFIRMED: The owner is DROPPING THE WEDDING RECEPTION only — full catering, bar service and reception staffing stop. The chapel and grounds keep hosting 2–4+ wedding ceremonies a month, plus standalone photo-location bookings, using the chapel and audio equipment the venue already owns
+- Most enquiries the owner currently receives are specifically for a ceremony venue and/or a photo location — the coastal forest views are the draw, not the reception
+- Ceremony pricing is structured hourly: a higher rate for the first hour (covers setup + the ceremony itself), tapering down for subsequent hours — owner's starting point is ~R14,000 for hour 1, ~R4,000 for hour 2, with an average ceremony running about 2 hours. This is editable per hour in the wizard
+- Direct running cost per ceremony/photo session is just staff time (opening up, running sound, resetting the space) — no equipment cost since the chapel and sound system are already paid for
+- The reception hall and full-event infrastructure (catering kitchen, bar, late-night staffing) are what's being wound down — the chapel itself stays active
 - Meal plan is TBD — currently leaning toward fully self-catering (single cabin residents share communal kitchen; en-suite cabins and house are self-contained)
 - Transport to local clinic and town for shopping (scheduled days)
 - Social programme: bowling at Pennington, golf, beach walks, braais, day trips
@@ -1673,7 +1845,7 @@ CURRENT LICENCE (wedding venue):
 
 HOW THE LICENCE APPLIES TO THE RETIREMENT LIVING MODEL:
 - Residents who are long-term tenants are NOT "guests at an event" under the licence terms
-- However, the existing licence DOES allow the venue to continue serving liquor at weddings — this revenue stream is unaffected
+- The existing licence DOES allow the venue to continue serving liquor at any wedding event on the premises — relevant if a ceremony includes a toast, even though the full reception bar service is being dropped
 - For residents: they purchase their own alcohol (off-consumption) for personal use in their rooms/cabins — this requires NO licence
 - For communal resident dinners: if wine or beer is included as part of a meal (not sold separately at a bar), this sits in a grey area — the safest interpretation is that it is covered under the existing on-consumption licence since the property is already licenced, but Debbie should confirm this with KZNERA specifically
 - If a "residents' bar" is ever opened (residents buying drinks at a bar counter on scheduled evenings), this would likely need explicit coverage under the existing licence or a licence amendment — check with KZNERA
@@ -1891,7 +2063,12 @@ function getWizardContext() {
     const careLevel = document.querySelector('#care-cards .radio-card.on')?.dataset.val;
     const contingency  = document.getElementById('c-contingency')?.value;
     const weddingRev   = document.getElementById('f-wedding-rev')?.value;
+    const weddingCost  = document.getElementById('f-wedding-cost')?.value;
     const step = currentStep;
+
+    const ceremonyLine = weddingPosture === 'ceremony'
+      ? `Ceremony model: ${document.getElementById('f-cer-count')?.value || 0} ceremonies/month @ ~${document.getElementById('f-cer-hours')?.value || 2}hrs each, R${parseInt(document.getElementById('f-wedding-rev')?.value || 0).toLocaleString()}/month gross, R${parseInt(weddingCost || 0).toLocaleString()}/month direct cost, plus ${document.getElementById('f-photo-count')?.value || 0} photo sessions/month @ R${parseInt(document.getElementById('f-photo-fee')?.value || 0).toLocaleString()} each`
+      : '';
 
     return [
       `Current wizard step: ${step} of 5`,
@@ -1902,7 +2079,8 @@ function getWizardContext() {
       careLevel ? `Care level: ${careLevel}` : '',
       contingency ? `Contingency buffer: ${contingency}%` : '',
       weddingRev  ? `Wedding revenue: R${parseInt(weddingRev).toLocaleString()}/month` : '',
-      `Wedding posture: ${weddingPosture}`
+      `Wedding posture: ${weddingPosture}`,
+      ceremonyLine
     ].filter(Boolean).join('\n');
   } catch { return ''; }
 }
