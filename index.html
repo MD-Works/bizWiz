@@ -43,6 +43,7 @@ body { font-family: var(--ff-b); background: var(--ivory); color: var(--ink); fo
   padding: 28px 32px 0;
   text-align: center;
   position: relative;
+  z-index: 2100;
   overflow: hidden;
 }
 .page-header::before {
@@ -70,11 +71,26 @@ body { font-family: var(--ff-b); background: var(--ivory); color: var(--ink); fo
   padding: 5px 12px; border-radius: 20px;
   border: 1px solid rgba(255,255,255,0.2);
   color: rgba(255,255,255,0.5);
-  cursor: default; transition: var(--trans);
+  cursor: pointer; transition: var(--trans);
   white-space: nowrap;
 }
-.step-pill.done { color: var(--gold-lt); border-color: var(--gold); cursor: pointer; }
+.step-pill:hover { border-color: var(--gold-lt); color: var(--gold-lt); }
+.step-pill.done { color: var(--gold-lt); border-color: var(--gold); }
 .step-pill.active { background: var(--gold); color: var(--ink); border-color: var(--gold); font-weight: 600; }
+
+/* ── VIEW REPORT LINK ── */
+.view-report-link {
+  display: none; text-align: center; padding: 10px 24px 0;
+  background: rgba(0,0,0,0.15);
+}
+.view-report-link.show { display: block; }
+.view-report-link button {
+  background: none; border: none; color: var(--gold-lt);
+  font-family: var(--ff-b); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.03em; cursor: pointer; padding: 6px 4px 14px;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.view-report-link button:hover { color: var(--white); }
 
 /* ── WIZARD BODY ── */
 .wizard-body { max-width: 720px; margin: 0 auto; padding: 32px 24px 60px; }
@@ -178,6 +194,43 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
 .output-doc { display: none; }
 .output-doc.active { display: block; }
 
+/* ── REPORT MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0;
+  top: var(--header-h, 0px);
+  z-index: 2000;
+  background: rgba(30,36,32,0.55);
+  padding: 24px 20px 40px;
+  overflow-y: auto;
+}
+.modal-overlay.active { display: block; }
+.modal-panel {
+  max-width: 760px; margin: 0 auto;
+  animation: fadeUp 0.25s ease;
+  position: relative;
+}
+.modal-topbar {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  padding: 0 0 10px;
+}
+.modal-topbar .btn { padding: 8px 16px; font-size: 13px; }
+.modal-close {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--white); border: 1.5px solid var(--border);
+  color: var(--ink); font-size: 15px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: var(--trans); flex-shrink: 0;
+}
+.modal-close:hover { background: var(--forest); border-color: var(--forest); color: var(--white); }
+@media (max-width: 520px) {
+  .modal-overlay { padding: 0; }
+  .modal-panel { max-width: 100%; }
+  .modal-topbar { background: var(--ivory); padding: 10px 14px; }
+  .doc-header, .doc-body, .doc-actions { border-radius: 0 !important; }
+}
+
 .doc-header {
   background: var(--forest); border-radius: var(--r) var(--r) 0 0;
   padding: 32px 36px; position: relative; overflow: hidden;
@@ -251,9 +304,11 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
 /* ── PRINT ── */
 @media print {
   .page-header, .doc-actions, .nav-row, .summary-strip, .step-pills, .progress-bar-wrap,
-  .chat-fab, .chat-panel { display: none !important; }
+  .chat-fab, .chat-panel, .view-report-link, .modal-topbar, .wizard-body { display: none !important; }
   .output-doc { display: block !important; }
   .doc-header { border-radius: 0; }
+  .modal-overlay { position: static !important; background: none !important; padding: 0 !important; overflow: visible !important; }
+  .modal-panel { max-width: 100% !important; }
   body { background: white; }
 }
 @media (max-width: 520px) {
@@ -477,6 +532,9 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
     <div class="progress-bar-fill" id="progress-fill"></div>
   </div>
   <div class="step-pills" id="step-pills"></div>
+  <div class="view-report-link" id="view-report-link">
+    <button onclick="openReportModal()">📄 View last generated report ›</button>
+  </div>
 </div>
 
 <div class="wizard-body">
@@ -1095,39 +1153,50 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
     </div>
   </div>
 
-  <!-- ── GENERATING ── -->
-  <div class="generating" id="generating">
-    <div class="gen-icon">🌿</div>
-    <div class="gen-title">Building your business model…</div>
-    <div class="gen-status" id="gen-status">Gathering your inputs…</div>
-  </div>
+</div><!-- /wizard-body -->
 
-  <!-- ── OUTPUT ── -->
-  <div class="output-doc" id="output-doc">
-    <div class="doc-header">
-      <div class="doc-header-inner">
-        <div class="doc-eyebrow">The Laughing Forest · Retirement Living</div>
-        <div class="doc-title">Business Model & Feasibility Report</div>
-        <div class="doc-subtitle" id="doc-subtitle">Retirement living expansion — Elysium, South Coast KZN</div>
-        <div class="doc-meta">
-          <div class="doc-meta-item">Generated <strong id="doc-date"></strong></div>
-          <div class="doc-meta-item">Units <strong id="doc-units"></strong></div>
-          <div class="doc-meta-item">Rent <strong id="doc-rent"></strong>/month</div>
-          <div class="doc-meta-item">Target occupancy <strong id="doc-occ"></strong></div>
+<!-- ── REPORT MODAL ── -->
+<div class="modal-overlay" id="report-modal-overlay">
+  <div class="modal-panel">
+    <div class="modal-topbar">
+      <button class="btn btn-outline" onclick="refreshReport()">↻ Refresh with current values</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨 Print / Save PDF</button>
+      <button class="modal-close" onclick="closeReportModal()" aria-label="Close report">✕</button>
+    </div>
+
+    <!-- ── GENERATING ── -->
+    <div class="generating" id="generating">
+      <div class="gen-icon">🌿</div>
+      <div class="gen-title">Building your business model…</div>
+      <div class="gen-status" id="gen-status">Gathering your inputs…</div>
+    </div>
+
+    <!-- ── OUTPUT ── -->
+    <div class="output-doc" id="output-doc">
+      <div class="doc-header">
+        <div class="doc-header-inner">
+          <div class="doc-eyebrow">The Laughing Forest · Retirement Living</div>
+          <div class="doc-title">Business Model & Feasibility Report</div>
+          <div class="doc-subtitle" id="doc-subtitle">Retirement living expansion — Elysium, South Coast KZN</div>
+          <div class="doc-meta">
+            <div class="doc-meta-item">Generated <strong id="doc-date"></strong></div>
+            <div class="doc-meta-item">Units <strong id="doc-units"></strong></div>
+            <div class="doc-meta-item">Rent <strong id="doc-rent"></strong>/month</div>
+            <div class="doc-meta-item">Target occupancy <strong id="doc-occ"></strong></div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="doc-body">
-      <div class="metrics-grid" id="doc-metrics"></div>
-      <div id="doc-content"></div>
-    </div>
-    <div class="doc-actions" style="padding:0 36px 32px;background:var(--white);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);">
-      <button class="btn btn-primary" onclick="window.print()">🖨 Print / Save PDF</button>
-      <button class="btn btn-outline" onclick="resetWizard()">← Start over</button>
+      <div class="doc-body">
+        <div class="metrics-grid" id="doc-metrics"></div>
+        <div id="doc-content"></div>
+      </div>
+      <div class="doc-actions" style="padding:0 36px 32px;background:var(--white);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r);">
+        <button class="btn btn-outline" onclick="resetWizard()">← Start over</button>
+      </div>
     </div>
   </div>
+</div>
 
-</div><!-- /wizard-body -->
 
 <!-- ══════════════════════════════════════
      GROQ CHATBOT — floating UI
@@ -1199,7 +1268,7 @@ function initPills() {
     const btn = document.createElement('button');
     btn.className = 'step-pill' + (i === 0 ? ' active' : '');
     btn.textContent = (i + 1) + '. ' + name;
-    btn.onclick = () => { if (btn.classList.contains('done') || btn.classList.contains('active')) goTo(i + 1); };
+    btn.onclick = () => { closeReportModal(); goTo(i + 1); };
     btn.id = 'pill-' + (i + 1);
     wrap.appendChild(btn);
   });
@@ -1508,9 +1577,9 @@ async function generateModel() {
   const breakeven     = ud.blended > 0 ? Math.ceil(totalCosts / ud.blended) : 0;
   const breakevenPct  = ud.totalUnits > 0 ? Math.round(breakeven / ud.totalUnits * 100) : 0;
 
-  document.getElementById('step-' + currentStep).classList.remove('active');
+  openReportModal();
+  document.getElementById('output-doc').classList.remove('active');
   document.getElementById('generating').classList.add('active');
-  document.getElementById('summary-strip').style.display = 'none';
 
   const statuses = [
     'Crunching the numbers…',
@@ -1757,11 +1826,46 @@ function renderOutput({ units, occ, rent, occupied, totalRevenue, totalCosts, ne
 
   document.getElementById('doc-content').innerHTML = content;
   document.getElementById('output-doc').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  hasReport = true;
+  document.getElementById('view-report-link').classList.add('show');
+  setModalTopOffset();
+
+  const overlay = document.getElementById('report-modal-overlay');
+  overlay.scrollTop = 0;
+}
+
+// ── REPORT MODAL ──
+let hasReport = false;
+
+function openReportModal() {
+  setModalTopOffset();
+  document.getElementById('report-modal-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function setModalTopOffset() {
+  const h = document.querySelector('.page-header').offsetHeight;
+  document.documentElement.style.setProperty('--header-h', h + 'px');
+}
+
+function closeReportModal() {
+  document.getElementById('report-modal-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function refreshReport() {
+  // Re-runs generation against whatever is currently in the form fields —
+  // lets the owner tweak inputs and check the report without leaving the modal.
+  generateModel();
 }
 
 function resetWizard() {
+  closeReportModal();
   document.getElementById('output-doc').classList.remove('active');
+  document.getElementById('view-report-link').classList.remove('show');
+  hasReport = false;
+  document.getElementById('step-' + currentStep).classList.remove('active');
   document.getElementById('summary-strip').style.display = 'none';
   currentStep = 1;
   document.getElementById('step-1').classList.add('active');
@@ -1774,6 +1878,18 @@ initPills();
 syncExtraCostFields();
 updateCeremonyCalc();
 updateSummary();
+setModalTopOffset();
+window.addEventListener('resize', setModalTopOffset);
+
+// Close the report modal on backdrop click or Escape
+document.getElementById('report-modal-overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'report-modal-overlay') closeReportModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('report-modal-overlay').classList.contains('active')) {
+    closeReportModal();
+  }
+});
 
 /* ══════════════════════════════════════════════════════════
    GROQ CHATBOT — Forest Guide
