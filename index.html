@@ -568,7 +568,7 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
           <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
             <div class="field-group" style="margin:0;min-width:80px;">
               <label style="font-size:11px;">Units</label>
-              <input type="number" id="u-a-count" value="6" min="0" max="20" style="width:70px;text-align:center;" oninput="updateSummary()"/>
+              <input type="number" id="u-a-count" value="0" min="0" max="20" style="width:70px;text-align:center;" oninput="updateSummary()"/>
             </div>
             <div class="field-group" style="margin:0;min-width:110px;">
               <label style="font-size:11px;">Rent / month (R)</label>
@@ -587,12 +587,12 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
           <div style="flex:1;min-width:180px;">
             <div style="font-family:var(--ff-d);font-size:15px;color:var(--forest);margin-bottom:2px;">En-suite cabin</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.5;">Bedroom, private bathroom, lounge &amp; outside deck / patio. Self-contained.</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.5;">Bedroom, bathroom, kitchen, lounge &amp; small deck/verandah. Self-contained.</div>
           </div>
           <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
             <div class="field-group" style="margin:0;min-width:80px;">
               <label style="font-size:11px;">Units</label>
-              <input type="number" id="u-b-count" value="7" min="0" max="20" style="width:70px;text-align:center;" oninput="updateSummary()"/>
+              <input type="number" id="u-b-count" value="11" min="0" max="20" style="width:70px;text-align:center;" oninput="updateSummary()"/>
             </div>
             <div class="field-group" style="margin:0;min-width:110px;">
               <label style="font-size:11px;">Rent / month (R)</label>
@@ -611,7 +611,7 @@ input[type=range] { width: 100%; accent-color: var(--forest); }
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
           <div style="flex:1;min-width:180px;">
             <div style="font-family:var(--ff-d);font-size:15px;color:var(--forest);margin-bottom:2px;">3-bedroom house</div>
-            <div style="font-size:12px;color:var(--muted);line-height:1.5;">Full house — suitable for a couple or resident who wants more space. Premium unit.</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.5;">250m² full house — suitable for a couple or resident who wants more space. Premium unit.</div>
           </div>
           <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
             <div class="field-group" style="margin:0;min-width:80px;">
@@ -1460,6 +1460,41 @@ function getUnitData() {
   return { aCount, aRent, bCount, bRent, cCount, cRent, totalUnits, rev100, blended };
 }
 
+// Unit type descriptions — kept in one place so every generated document
+// (prompt, fallback text, chatbot context) stays in sync with the actual
+// field values instead of hardcoding "6 single, 7 en-suite, 1 house".
+const UNIT_TYPE_INFO = {
+  a: { singular: 'single cabin room', plural: 'single cabin rooms', features: 'communal kitchen & shared deck, self-catering, no en-suite' },
+  b: { singular: 'en-suite cabin', plural: 'en-suite cabins', features: 'bedroom, bathroom, kitchen, lounge and small deck/verandah' },
+  c: { singular: '250m² three-bedroom house', plural: '250m² three-bedroom houses', features: 'full house, suited to a couple or a resident who wants more space' }
+};
+
+// Builds a natural-language unit mix sentence from whatever counts/rents are
+// actually in the form — only mentions types with count > 0.
+function unitMixSentence(ud, { withFeatures = false } = {}) {
+  const parts = [];
+  [['a', ud.aCount, ud.aRent], ['b', ud.bCount, ud.bRent], ['c', ud.cCount, ud.cRent]].forEach(([key, count, rent]) => {
+    if (count <= 0) return;
+    const info = UNIT_TYPE_INFO[key];
+    const label = count === 1 ? info.singular : info.plural;
+    const feat = withFeatures ? ` (${info.features})` : '';
+    parts.push(`${count} ${label}${feat} at R${rent.toLocaleString()}/month`);
+  });
+  if (parts.length === 0) return 'no units configured yet';
+  if (parts.length === 1) return parts[0];
+  return parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1];
+}
+
+// Builds the "X units total — assuming wedding ceremonies are allocated a
+// value of one unit" framing used in the Executive Summary when there's a
+// wedding income stream alongside the physical accommodation units.
+function unitsWithWeddingValueSentence(ud, weddingRev) {
+  if (weddingRev > 0) {
+    return `${ud.totalUnits + 1} units (${ud.totalUnits} physical accommodation units, plus wedding ceremonies valued as a further unit)`;
+  }
+  return `${ud.totalUnits} units`;
+}
+
 // ── LIVE SUMMARY ──
 function updateSummary() {
   const ud  = getUnitData();
@@ -1600,10 +1635,7 @@ BUSINESS CONCEPT:
 Long-term rental accommodation for people aged ${ageBands.join(', ')}. Located in Elysium, South Coast KZN — 55 minutes from Durban, in coastal dune forest 20 metres above sea level. NO medical care — just good living, community, and the ocean.
 
 UNIT MIX (owner-confirmed):
-- 6 single cabin rooms with communal kitchen & shared deck: R${ud.aRent.toLocaleString()}/month each → R${(ud.aCount * ud.aRent).toLocaleString()}/month at 100%
-- 7 en-suite cabins (bedroom, private bathroom, lounge, outside deck): R${ud.bRent.toLocaleString()}/month each → R${(ud.bCount * ud.bRent).toLocaleString()}/month at 100%
-- 1 three-bedroom house: R${ud.cRent.toLocaleString()}/month → R${(ud.cCount * ud.cRent).toLocaleString()}/month at 100%
-- Total: ${ud.totalUnits} units. Full occupancy revenue: R${ud.rev100.toLocaleString()}/month. Blended rent: R${ud.blended.toLocaleString()}/unit.
+${ud.aCount > 0 ? `- ${ud.aCount} ${ud.aCount === 1 ? UNIT_TYPE_INFO.a.singular : UNIT_TYPE_INFO.a.plural} (${UNIT_TYPE_INFO.a.features}): R${ud.aRent.toLocaleString()}/month each → R${(ud.aCount * ud.aRent).toLocaleString()}/month at 100%\n` : ''}${ud.bCount > 0 ? `- ${ud.bCount} ${ud.bCount === 1 ? UNIT_TYPE_INFO.b.singular : UNIT_TYPE_INFO.b.plural} (${UNIT_TYPE_INFO.b.features}): R${ud.bRent.toLocaleString()}/month each → R${(ud.bCount * ud.bRent).toLocaleString()}/month at 100%\n` : ''}${ud.cCount > 0 ? `- ${ud.cCount} ${ud.cCount === 1 ? UNIT_TYPE_INFO.c.singular : UNIT_TYPE_INFO.c.plural} (${UNIT_TYPE_INFO.c.features}): R${ud.cRent.toLocaleString()}/month → R${(ud.cCount * ud.cRent).toLocaleString()}/month at 100%\n` : ''}- Total: ${ud.totalUnits} physical units${weddingRev > 0 ? ` (${unitsWithWeddingValueSentence(ud, weddingRev)} once wedding ceremonies are valued as a further unit)` : ''}. Full occupancy revenue: R${ud.rev100.toLocaleString()}/month. Blended rent: R${ud.blended.toLocaleString()}/unit.
 
 STAFFING MODEL (owner-confirmed):
 - On-site cleaner at basic wage (communal areas + refuse removal; residents can engage her directly for in-room cleaning at their own cost)
@@ -1697,14 +1729,15 @@ Tone: warm, grounded, professional. Written for a small business owner, not a co
 }
 
 function buildFallback({ units, occ, rent, occupied, totalRevenue, totalCosts, netProfit, margin, annualProfit, depositPool, weddingRev, weddingDirectCost = 0, mealPlan, activities, vision, weddingPostureVal = 'keep', windMonths = '6', ud = null, cerCount = 0, cerHours = 2, cerHourRates = [], cerPerEvent = 0, photoCount = 0, photoFee = 0, cerCostEach = 0, photoCostEach = 0 }) {
-  const unitMixDesc = ud ? `6 single cabins at R${ud.aRent.toLocaleString()}/month, 7 en-suite cabins at R${ud.bRent.toLocaleString()}/month, and 1 three-bedroom house at R${ud.cRent.toLocaleString()}/month` : `${units} units at a blended rate of R${rent.toLocaleString()}/month`;
+  const unitMixDesc = ud ? unitMixSentence(ud, { withFeatures: true }) : `${units} units at a blended rate of R${rent.toLocaleString()}/month`;
+  const unitsHeadline = ud ? unitsWithWeddingValueSentence(ud, weddingRev) : `${units} units`;
   const breakeven = Math.ceil(totalCosts / rent);
   const breakevenPct = Math.round(breakeven / units * 100);
   const viableWord = margin >= 20 ? 'strong' : margin >= 10 ? 'moderate' : margin >= 0 ? 'marginal' : 'challenging';
   return `
 <h2>Executive Summary</h2>
 <p>The Laughing Forest Retirement Living is a proposed expansion of the existing Laughing Forest wedding venue in Elysium on the South Coast of KZN. The concept offers long-term rental across a thoughtfully varied unit mix — ${unitMixDesc} — for active, independent residents aged 60–75. The location is coastal dune forest, 20 metres above sea level, 55 minutes from Durban.</p>
-<p>At ${units} units with a target occupancy of ${occ}%, the model generates estimated monthly revenue of R${totalRevenue.toLocaleString()} against estimated costs of R${totalCosts.toLocaleString()}, producing a monthly net ${netProfit >= 0 ? 'profit' : 'loss'} of R${Math.abs(netProfit).toLocaleString()} — a <strong>${margin}% margin</strong>. The outlook is ${viableWord}.</p>
+<p>At ${unitsHeadline}, with a target occupancy of ${occ}%, the model generates estimated monthly revenue of R${totalRevenue.toLocaleString()} against estimated costs of R${totalCosts.toLocaleString()}, producing a monthly net ${netProfit >= 0 ? 'profit' : 'loss'} of R${Math.abs(netProfit).toLocaleString()} — a <strong>${margin}% margin</strong>. The outlook is ${viableWord}.</p>
 ${vision ? '<p><em>"' + vision + '"</em></p>' : ''}
 
 <h2>The Concept</h2>
@@ -1721,12 +1754,10 @@ ${vision ? '<p><em>"' + vision + '"</em></p>' : ''}
 </ul>
 
 <h2>Unit Mix & Revenue Model</h2>
-<p>The Laughing Forest offers three distinct accommodation types, each with its own price point and appeal:</p>
+<p>The Laughing Forest offers ${[ud.aCount, ud.bCount, ud.cCount].filter(c => c > 0).length} distinct accommodation type${[ud.aCount, ud.bCount, ud.cCount].filter(c => c > 0).length === 1 ? '' : 's'}, each with its own price point and appeal:</p>
 <ul>
-  <li><strong>6 Single Cabins</strong> — private room with communal kitchen and shared deck. R${ud.aRent.toLocaleString()}/month. Ideal for independent singles who want community built in. Full occupancy contributes R${(ud.aCount * ud.aRent).toLocaleString()}/month.</li>
-  <li><strong>7 En-Suite Cabins</strong> — bedroom, private bathroom, lounge, outside deck. R${ud.bRent.toLocaleString()}/month. The core offering — private living with the forest on your doorstep. Full occupancy contributes R${(ud.bCount * ud.bRent).toLocaleString()}/month.</li>
-  <li><strong>1 Three-Bedroom House</strong> — R${ud.cRent.toLocaleString()}/month. Suited for a couple, a small family group, or a resident who simply wants more space. Contributes R${(ud.cCount * ud.cRent).toLocaleString()}/month at full occupancy.</li>
-</ul>
+${ud.aCount > 0 ? `  <li><strong>${ud.aCount} ${ud.aCount === 1 ? UNIT_TYPE_INFO.a.singular : UNIT_TYPE_INFO.a.plural}</strong> — ${UNIT_TYPE_INFO.a.features}. R${ud.aRent.toLocaleString()}/month. Ideal for independent singles who want community built in. Full occupancy contributes R${(ud.aCount * ud.aRent).toLocaleString()}/month.</li>\n` : ''}${ud.bCount > 0 ? `  <li><strong>${ud.bCount} ${ud.bCount === 1 ? UNIT_TYPE_INFO.b.singular : UNIT_TYPE_INFO.b.plural}</strong> — ${UNIT_TYPE_INFO.b.features}. R${ud.bRent.toLocaleString()}/month. The core offering — private living with the forest on your doorstep. Full occupancy contributes R${(ud.bCount * ud.bRent).toLocaleString()}/month.</li>\n` : ''}${ud.cCount > 0 ? `  <li><strong>${ud.cCount} ${ud.cCount === 1 ? UNIT_TYPE_INFO.c.singular : UNIT_TYPE_INFO.c.plural}</strong> — R${ud.cRent.toLocaleString()}/month. Suited for a couple, a small family group, or a resident who simply wants more space. Contributes R${(ud.cCount * ud.cRent).toLocaleString()}/month at full occupancy.</li>\n` : ''}</ul>
+${weddingRev > 0 ? `<p>Alongside these ${ud.totalUnits} physical units, wedding ceremonies are treated as a further unit of value in the mix above — bringing the model to ${ud.totalUnits + 1} units in total when accommodation and wedding income are considered together.</p>` : ''}
 <p>At full occupancy (${ud.totalUnits} units), total rental revenue is R${ud.rev100.toLocaleString()}/month. At the target occupancy of ${occ}% (${occupied} units occupied), monthly rental revenue is R${(Math.round(ud.rev100 * occ / 100)).toLocaleString()}. The blended average rent across all unit types is R${ud.blended.toLocaleString()}/unit. ${weddingRev > 0 ? 'The wedding venue contributes an additional R' + weddingRev.toLocaleString() + '/month.' : ''}</p>
 <p>The deposit structure (${document.getElementById('f-deposit').value} months upfront) provides R${depositPool.toLocaleString()} in working capital at full occupancy — a meaningful buffer for the startup phase.</p>
 <div class="alert-box alert-info"><strong>Break-even point:</strong> ${breakeven} of ${units} units occupied (${breakevenPct}% occupancy). Below this, the model runs at a loss. Above it, each additional occupied unit contributes R${Math.round(rent - totalCosts / units).toLocaleString()}/month directly to profit.</div>
@@ -1916,12 +1947,12 @@ THE RETIREMENT LIVING CONCEPT:
 - Ceremony pricing is structured hourly: a higher rate for the first hour (covers setup + the ceremony itself), tapering down for subsequent hours — owner's starting point is ~R14,000 for hour 1, ~R4,000 for hour 2, with an average ceremony running about 2 hours. This is editable per hour in the wizard
 - Direct running cost per ceremony/photo session is just staff time (opening up, running sound, resetting the space) — no equipment cost since the chapel and sound system are already paid for
 - The reception hall and full-event infrastructure (catering kitchen, bar, late-night staffing) are what's being wound down — the chapel itself stays active
-- Meal plan is TBD — currently leaning toward fully self-catering (single cabin residents share communal kitchen; en-suite cabins and house are self-contained)
+- Meal plan is TBD — currently leaning toward fully self-catering (en-suite cabins and the house have their own kitchens/self-contained facilities)
 - Transport to local clinic and town for shopping (scheduled days)
 - Social programme: bowling at Pennington, golf, beach walks, braais, day trips
 - Staffing model confirmed: on-site cleaner at basic wage (communal areas + refuse; residents hire her directly for in-room work at their own cost), 5-day maintenance/grounds person, weekly garden contractor (Bizzy Bees or similar)
 - No medical care of any kind — this is a deliberate and legally important position
-- Property unit mix confirmed: 6 single cabin rooms with communal kitchen & deck (R6,500/month), 7 en-suite cabins with bedroom/bathroom/lounge/deck (R10,000/month), 1 three-bedroom house (R15,000/month) — 14 units total, R124,000/month at full occupancy
+- Property unit mix confirmed: 11 en-suite cabins — bedroom, bathroom, kitchen, lounge and small deck/verandah, self-contained (R10,000/month) — plus 1 three-bedroom house, 250m² (R15,000/month) — 12 physical units total. Wedding ceremonies are treated as a further unit of value alongside these, bringing the model to 13 units when accommodation and wedding income are considered together. (These are starting defaults — the wizard's live field values, given further down, are the source of truth if the owner has since changed them.)
 - Owner pays: water, electricity, municipal rates, insurance — all included in rent
 
 FRAIL CARE REGULATION — CRITICAL KNOWLEDGE:
@@ -2188,7 +2219,7 @@ function getWizardContext() {
 
     return [
       `Current wizard step: ${step} of 5`,
-      `Unit mix: ${ud.aCount} single cabins @R${ud.aRent.toLocaleString()}, ${ud.bCount} en-suite cabins @R${ud.bRent.toLocaleString()}, ${ud.cCount} house @R${ud.cRent.toLocaleString()}`,
+      `Unit mix: ${unitMixSentence(ud)}`,
       `Total units: ${ud.totalUnits} | Full occupancy revenue: R${ud.rev100.toLocaleString()}/month | Blended rent: R${ud.blended.toLocaleString()}`,
       occ ? `Target occupancy: ${occ}%` : '',
       mealPlan  ? `Meal plan: ${mealPlan}` : '',
